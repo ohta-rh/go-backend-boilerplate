@@ -38,10 +38,10 @@ graph TD
     R --> I
     DB --> I
     
-    classDef core fill:#ff9af0,stroke:#fff,stroke-width:2px;
-    classDef adapter fill:#a4a4ff,stroke:#fff,stroke-width:1px;
-    classDef external fill:#a8ffa8,stroke:#fff,stroke-width:1px;
-    classDef infra fill:#ffb2a8,stroke:#fff,stroke-width:1px;
+    classDef core fill:#f0f0f0,stroke:#333,stroke-width:2px;
+    classDef adapter fill:#e0e0e0,stroke:#333,stroke-width:1px;
+    classDef external fill:#d0d0d0,stroke:#333,stroke-width:1px;
+    classDef infra fill:#c0c0c0,stroke:#333,stroke-width:1px;
     
     class D,UC core;
     class H,R adapter;
@@ -145,9 +145,9 @@ graph TD
     PR --> Review[Code Review]
     Review --> Merge[Merge to Main]
     
-    classDef start fill:#a8ffa8,stroke:#fff,stroke-width:1px;
-    classDef process fill:#a4a4ff,stroke:#fff,stroke-width:1px;
-    classDef end fill:#ffb2a8,stroke:#fff,stroke-width:1px;
+    classDef start fill:#d0d0d0,stroke:#333,stroke-width:1px;
+    classDef process fill:#e0e0e0,stroke:#333,stroke-width:1px;
+    classDef end fill:#c0c0c0,stroke:#333,stroke-width:1px;
     
     class Start start;
     class Implement,Test,Lint,Fix,PR,Review process;
@@ -166,10 +166,10 @@ flowchart TD
     F --> G[7. Add Handler]
     G --> H[8. Add Route]
     
-    classDef schema fill:#ff9af0,stroke:#fff,stroke-width:1px;
-    classDef domain fill:#a4a4ff,stroke:#fff,stroke-width:1px;
-    classDef impl fill:#a8ffa8,stroke:#fff,stroke-width:1px;
-    classDef api fill:#ffb2a8,stroke:#fff,stroke-width:1px;
+    classDef schema fill:#f0f0f0,stroke:#333,stroke-width:1px;
+    classDef domain fill:#e0e0e0,stroke:#333,stroke-width:1px;
+    classDef impl fill:#d0d0d0,stroke:#333,stroke-width:1px;
+    classDef api fill:#c0c0c0,stroke:#333,stroke-width:1px;
     
     class A,B schema;
     class C domain;
@@ -210,12 +210,12 @@ graph TD
     Schema --> |Validates| DataTransformation["DTO Conversion<br/>Validation"]
     Infra --> |Validates| ExternalServices["External Integrations<br/>Database Connections"]
     
-    classDef domain fill:#ff9af0,stroke:#fff,stroke-width:1px;
-    classDef usecase fill:#a4a4ff,stroke:#fff,stroke-width:1px;
-    classDef repo fill:#a8ffa8,stroke:#fff,stroke-width:1px;
-    classDef handler fill:#ffb2a8,stroke:#fff,stroke-width:1px;
-    classDef schema fill:#f0b2ff,stroke:#fff,stroke-width:1px;
-    classDef infra fill:#a8f0ff,stroke:#fff,stroke-width:1px;
+    classDef domain fill:#f0f0f0,stroke:#333,stroke-width:1px;
+    classDef usecase fill:#e0e0e0,stroke:#333,stroke-width:1px;
+    classDef repo fill:#d0d0d0,stroke:#333,stroke-width:1px;
+    classDef handler fill:#c0c0c0,stroke:#333,stroke-width:1px;
+    classDef schema fill:#b0b0b0,stroke:#333,stroke-width:1px;
+    classDef infra fill:#a0a0a0,stroke:#333,stroke-width:1px;
     
     class Domain,DomainEntities domain;
     class UseCase,BusinessLogic usecase;
@@ -273,9 +273,9 @@ flowchart LR
     BuildProd --> TestProd[Test Production]
     TestProd --> Deploy[Deploy]
     
-    classDef trigger fill:#ff9af0,stroke:#fff,stroke-width:1px;
-    classDef process fill:#a4a4ff,stroke:#fff,stroke-width:1px;
-    classDef deploy fill:#a8ffa8,stroke:#fff,stroke-width:1px;
+    classDef trigger fill:#f0f0f0,stroke:#333,stroke-width:1px;
+    classDef process fill:#e0e0e0,stroke:#333,stroke-width:1px;
+    classDef deploy fill:#d0d0d0,stroke:#333,stroke-width:1px;
     
     class PR,Push trigger;
     class Build,Lint,Test,Coverage,Report,BuildProd,TestProd process;
@@ -317,8 +317,8 @@ flowchart TD
     Infrastructure --> Domain
     Schema --> Domain
     
-    classDef core fill:#ff9af0,stroke:#fff,stroke-width:2px;
-    classDef outer fill:#a4a4ff,stroke:#fff,stroke-width:1px;
+    classDef core fill:#f0f0f0,stroke:#333,stroke-width:2px;
+    classDef outer fill:#e0e0e0,stroke:#333,stroke-width:1px;
     
     class Domain core;
     class UseCase,Handler,Repository,Infrastructure,Schema outer;
