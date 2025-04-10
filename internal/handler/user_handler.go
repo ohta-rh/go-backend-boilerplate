@@ -111,7 +111,7 @@ func (h *UserHandler) GetAllUsers(c *gin.Context) {
 	c.JSON(http.StatusOK, schema.FromEntities(users))
 }
 
-// RegisterRoutes はユーザー関連のルートを登録します
+// RegisterRoutes はユーザー関連のルートを登録します.
 func (h *UserHandler) RegisterRoutes(router *gin.RouterGroup) {
 	users := router.Group("/users")
 	users.GET("", h.GetAllUsers)
