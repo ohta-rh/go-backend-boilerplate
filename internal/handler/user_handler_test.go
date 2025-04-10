@@ -298,7 +298,7 @@ func setupTestRouter(mockInteractor *MockUserInteractor) *gin.Engine {
 }
 
 // performRequest はテスト用のHTTPリクエストを実行します.
-func performRequest(r http.Handler, method, path string, body interface{}) *httptest.ResponseRecorder {
+func performRequest(r http.Handler, method, path string, body any) *httptest.ResponseRecorder {
 	var reqBody *bytes.Buffer
 
 	if body != nil {

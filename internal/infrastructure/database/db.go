@@ -15,7 +15,7 @@ func NewClient(dsn string, maxRetries int) (*ent.Client, error) {
 
 	var err error
 
-	for i := 0; i < maxRetries; i++ {
+	for i := range maxRetries {
 		client, err = ent.Open("postgres", dsn)
 		if err == nil {
 			break

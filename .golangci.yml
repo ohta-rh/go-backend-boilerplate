@@ -1,0 +1,77 @@
+run:
+  go: '1.24'
+  timeout: 5m
+  
+linters:
+  disable-all: true
+  enable:
+    - gofmt
+    - govet
+    - errcheck
+    - staticcheck
+    - unused
+    - gosimple
+    - ineffassign
+    - misspell
+    - gocyclo
+    - dupl
+    - goconst
+    - goimports
+    - bodyclose
+    - revive
+    - prealloc
+    - unconvert
+    - unparam
+    - gocritic
+    - godot
+    - whitespace
+    - wsl
+    - nolintlint
+    - gochecknoinits
+    - gochecknoglobals
+    - gosec
+    - stylecheck
+    - nakedret
+    - dogsled
+    - nestif
+
+linters-settings:
+  gocyclo:
+    min-complexity: 10
+  dupl:
+    threshold: 100
+  goconst:
+    min-len: 3
+    min-occurrences: 3
+  revive:
+    rules:
+      - name: exported
+        severity: warning
+        disabled: false
+  gocritic:
+    enabled-tags:
+      - diagnostic
+      - style
+      - performance
+      - experimental
+      - opinionated
+  nestif:
+    min-complexity: 4
+
+issues:
+  exclude-rules:
+    - path: _test\.go
+      linters:
+        - errcheck
+        - gosec
+  exclude-dirs:
+    - ent/
+    - tmp/
+  max-issues-per-linter: 0
+  max-same-issues: 0
+  fix: true
+
+output:
+  sort-results: true
+  formats:
+    - format: colored-line-number
