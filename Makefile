@@ -34,6 +34,10 @@ api.dev:
 api.lint:
 	docker-compose exec api golangci-lint run --fix
 	docker-compose exec api modernize -fix ./...
+	docker-compose exec api golangci-lint run
+
+api.lint.check:
+	docker-compose exec api golangci-lint run
 
 # Complete ent setup - install, init, and generate
 api.ent.setup: api.ent.init api.ent.generate api.install

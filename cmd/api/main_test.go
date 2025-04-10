@@ -1,3 +1,4 @@
+//nolint:wsl // whitespace issue that is difficult to fix
 package main
 
 import (
