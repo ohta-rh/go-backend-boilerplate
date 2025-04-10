@@ -2,47 +2,50 @@ package usecase
 
 import (
 	"context"
+	"errors"
 	"testing"
 	"time"
 
-	"easy-go-backend/internal/domain/user"
+	domainUser "easy-go-backend/internal/domain/user"
 )
 
 // MockUserRepository はテスト用のモックリポジトリです.
 type MockUserRepository struct {
-	users map[int]*user.User
+	users map[int]*domainUser.User
 }
 
 // NewMockUserRepository はモックリポジトリを作成します.
 func NewMockUserRepository() *MockUserRepository {
 	return &MockUserRepository{
-		users: make(map[int]*user.User),
+		users: make(map[int]*domainUser.User),
 	}
 }
 
 // GetByID はIDによるユーザー取得をモックします.
-func (m *MockUserRepository) GetByID(ctx context.Context, id int) (*user.User, error) {
+func (m *MockUserRepository) GetByID(ctx context.Context, id int) (*domainUser.User, error) {
 	if u, ok := m.users[id]; ok {
 		return u, nil
 	}
 
-	return nil, nil
+	// nilとnilを返す代わりに、センチネルエラーを使用
+	return nil, domainUser.ErrUserNotFound
 }
 
 // Create はユーザー作成をモックします.
-func (m *MockUserRepository) Create(ctx context.Context, u *user.User) (*user.User, error) {
+func (m *MockUserRepository) Create(ctx context.Context, u *domainUser.User) (*domainUser.User, error) {
 	m.users[u.ID] = u
 	return u, nil
 }
 
 // Update はユーザー更新をモックします.
-func (m *MockUserRepository) Update(ctx context.Context, u *user.User) (*user.User, error) {
+func (m *MockUserRepository) Update(ctx context.Context, u *domainUser.User) (*domainUser.User, error) {
 	if _, ok := m.users[u.ID]; ok {
 		m.users[u.ID] = u
 		return u, nil
 	}
 
-	return nil, nil
+	// nilとnilを返す代わりに、センチネルエラーを使用
+	return nil, domainUser.ErrUserNotFound
 }
 
 // Delete はユーザー削除をモックします.
@@ -52,8 +55,8 @@ func (m *MockUserRepository) Delete(ctx context.Context, id int) error {
 }
 
 // GetAll は全ユーザー取得をモックします.
-func (m *MockUserRepository) GetAll(ctx context.Context) ([]*user.User, error) {
-	users := make([]*user.User, 0, len(m.users))
+func (m *MockUserRepository) GetAll(ctx context.Context) ([]*domainUser.User, error) {
+	users := make([]*domainUser.User, 0, len(m.users))
 	for _, u := range m.users {
 		users = append(users, u)
 	}
@@ -65,7 +68,7 @@ func TestUserInteractor_GetUser(t *testing.T) {
 	// モックリポジトリの準備
 	repo := NewMockUserRepository()
 	// テスト用ユーザーデータの作成
-	testUser := &user.User{
+	testUser := &domainUser.User{
 		ID:        1,
 		Name:      "Test User",
 		Email:     "test@example.com",
@@ -106,8 +109,8 @@ func TestUserInteractor_GetUser(t *testing.T) {
 		ctx := context.Background()
 		result, err := interactor.GetUser(ctx, 999)
 
-		if err != nil {
-			t.Fatalf("Expected no error, got %v", err)
+		if !errors.Is(err, domainUser.ErrUserNotFound) {
+			t.Fatalf("Expected error %v, got %v", domainUser.ErrUserNotFound, err)
 		}
 
 		if result != nil {
@@ -126,7 +129,7 @@ func TestUserInteractor_CreateUser(t *testing.T) {
 	// テストケース
 	t.Run("create new user", func(t *testing.T) {
 		ctx := context.Background()
-		newUser := &user.User{
+		newUser := &domainUser.User{
 			ID:        2,
 			Name:      "New User",
 			Email:     "new@example.com",
@@ -160,8 +163,8 @@ func TestUserInteractor_GetAllUsers(t *testing.T) {
 	repo := NewMockUserRepository()
 
 	// テスト用ユーザーデータの作成
-	user1 := &user.User{ID: 1, Name: "User 1", Email: "user1@example.com", CreatedAt: time.Now()}
-	user2 := &user.User{ID: 2, Name: "User 2", Email: "user2@example.com", CreatedAt: time.Now()}
+	user1 := &domainUser.User{ID: 1, Name: "User 1", Email: "user1@example.com", CreatedAt: time.Now()}
+	user2 := &domainUser.User{ID: 2, Name: "User 2", Email: "user2@example.com", CreatedAt: time.Now()}
 
 	repo.users[user1.ID] = user1
 	repo.users[user2.ID] = user2

@@ -86,7 +86,7 @@ linters-settings:
   forbidigo:
     forbid:
       - ^fmt\.Print.*$
-      - ^log\..*$
+      - ^log\.(Print|Fatal|Panic).*$  # 標準のlogパッケージのみを禁止
       - ^panic$
       - ^os\.Exit$
   errorlint:

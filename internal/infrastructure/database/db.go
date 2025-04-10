@@ -2,12 +2,12 @@ package database
 
 import (
 	"context"
-	"log"
 	"time"
 
 	"easy-go-backend/ent"
 
 	_ "github.com/lib/pq"
+	"github.com/rs/zerolog/log"
 )
 
 // NewClient creates a new ent client with connection to PostgreSQL.
@@ -22,7 +22,8 @@ func NewClient(dsn string, maxRetries int) (*ent.Client, error) {
 			break
 		}
 
-		log.Printf("Failed to connect to database (attempt %d/%d): %v", i+1, maxRetries, err)
+		log.Warn().Int("attempt", i+1).Int("maxRetries", maxRetries).Err(err).Msg("Failed to connect to database")
+		time.Sleep(time.Duration(i+1) * time.Second)
 		time.Sleep(time.Duration(i+1) * time.Second)
 	}
 

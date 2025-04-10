@@ -1,8 +1,12 @@
 package user
 
 import (
+	"errors"
 	"time"
 )
+
+// ErrUserNotFound is returned when a user is not found.
+var ErrUserNotFound = errors.New("user not found")
 
 // User represents a user entity in the domain layer.
 type User struct {

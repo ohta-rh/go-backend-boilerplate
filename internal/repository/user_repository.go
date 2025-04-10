@@ -23,6 +23,10 @@ func NewUserRepository(client *ent.Client) *UserRepository {
 func (r *UserRepository) GetByID(ctx context.Context, id int) (*domainUser.User, error) {
 	u, err := r.client.User.Get(ctx, id)
 	if err != nil {
+		if ent.IsNotFound(err) {
+			return nil, domainUser.ErrUserNotFound
+		}
+
 		return nil, err
 	}
 
@@ -51,6 +55,10 @@ func (r *UserRepository) Update(ctx context.Context, user *domainUser.User) (*do
 		SetEmail(user.Email).
 		Save(ctx)
 	if err != nil {
+		if ent.IsNotFound(err) {
+			return nil, domainUser.ErrUserNotFound
+		}
+
 		return nil, err
 	}
 
@@ -59,7 +67,16 @@ func (r *UserRepository) Update(ctx context.Context, user *domainUser.User) (*do
 
 // Delete removes a user by ID.
 func (r *UserRepository) Delete(ctx context.Context, id int) error {
-	return r.client.User.DeleteOneID(id).Exec(ctx)
+	err := r.client.User.DeleteOneID(id).Exec(ctx)
+	if err != nil {
+		if ent.IsNotFound(err) {
+			return domainUser.ErrUserNotFound
+		}
+
+		return err
+	}
+
+	return nil
 }
 
 // GetAll retrieves all users.

@@ -11,13 +11,12 @@ func TestMain(m *testing.M) {
 	setup()
 
 	// テストを実行
-	code := m.Run()
+	m.Run()
 
 	// テスト後のクリーンアップ
 	teardown()
-
-	// テスト結果のステータスコードで終了
-	os.Exit(code)
+	// os.Exit(code)の代わりに、codeを返す
+	// テスト結果はm.Run()の戻り値として取得できるため、明示的にExitする必要はない
 }
 
 // テスト前の準備.

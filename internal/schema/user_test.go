@@ -4,7 +4,7 @@ import (
 	"testing"
 	"time"
 
-	"easy-go-backend/internal/domain/user"
+	domainUser "easy-go-backend/internal/domain/user"
 )
 
 func TestUserRequest_ToEntity(t *testing.T) {
@@ -30,7 +30,7 @@ func TestUserRequest_ToEntity(t *testing.T) {
 func TestFromEntity(t *testing.T) {
 	// テストデータ
 	now := time.Now()
-	entity := &user.User{
+	entity := &domainUser.User{
 		ID:        1,
 		Name:      "Test User",
 		Email:     "test@example.com",
@@ -61,7 +61,7 @@ func TestFromEntity(t *testing.T) {
 func TestFromEntities(t *testing.T) {
 	// テストデータ
 	now := time.Now()
-	entities := []*user.User{
+	entities := []*domainUser.User{
 		{
 			ID:        1,
 			Name:      "User 1",

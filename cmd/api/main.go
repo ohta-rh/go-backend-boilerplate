@@ -1,7 +1,6 @@
 package main
 
 import (
-	"log"
 	"os"
 
 	"easy-go-backend/internal/handler"
@@ -11,6 +10,8 @@ import (
 
 	"github.com/gin-gonic/gin"
 	_ "github.com/lib/pq"
+	"github.com/rs/zerolog"
+	"github.com/rs/zerolog/log"
 )
 
 // run is the actual application logic, separate from main to properly handle defer.
@@ -21,14 +22,17 @@ func run() error {
 		env = "development" // デフォルトは開発環境
 	}
 
+	// ロガーの設定
+	zerolog.TimeFieldFormat = zerolog.TimeFormatUnix
+
 	// 環境に応じた設定
 	if env == "development" {
 		// 開発環境の場合はデバッグモードを有効化
-		log.Println("Running in development mode")
+		log.Info().Msg("Running in development mode")
 		gin.SetMode(gin.DebugMode)
 	} else {
 		// 本番環境の場合はリリースモードを設定
-		log.Println("Running in production mode")
+		log.Info().Msg("Running in production mode")
 		gin.SetMode(gin.ReleaseMode)
 	}
 
@@ -40,9 +44,9 @@ func run() error {
 	if err != nil {
 		return err
 	}
-	defer client.Close()
 
-	log.Println("Successfully connected to database")
+	defer client.Close()
+	log.Info().Msg("Successfully connected to database")
 
 	// リポジトリの作成
 	userRepo := repository.NewUserRepository(client)
@@ -59,7 +63,7 @@ func run() error {
 		port = "8080" // デフォルトポート
 	}
 
-	log.Printf("Server starting on port %s...\n", port)
+	log.Info().Str("port", port).Msg("Server starting")
 
 	// Run the server and handle the error
 	return r.Run(":" + port)
@@ -67,7 +71,8 @@ func run() error {
 
 func main() {
 	if err := run(); err != nil {
-		log.Printf("Application error: %v", err)
-		os.Exit(1)
+		log.Error().Err(err).Msg("Application error")
+		// os.Exit(1)の代わりに、エラーメッセージを出力して終了
+		return
 	}
 }

@@ -3,7 +3,7 @@ package schema
 import (
 	"time"
 
-	"easy-go-backend/internal/domain/user"
+	domainUser "easy-go-backend/internal/domain/user"
 )
 
 // UserRequest represents the request schema for user operations.
@@ -21,15 +21,15 @@ type UserResponse struct {
 }
 
 // ToEntity converts a UserRequest to a domain User entity.
-func (r *UserRequest) ToEntity() *user.User {
-	return &user.User{
+func (r *UserRequest) ToEntity() *domainUser.User {
+	return &domainUser.User{
 		Name:  r.Name,
 		Email: r.Email,
 	}
 }
 
 // FromEntity creates a UserResponse from a domain User entity.
-func FromEntity(u *user.User) *UserResponse {
+func FromEntity(u *domainUser.User) *UserResponse {
 	return &UserResponse{
 		ID:        u.ID,
 		Name:      u.Name,
@@ -39,7 +39,7 @@ func FromEntity(u *user.User) *UserResponse {
 }
 
 // FromEntities creates a slice of UserResponse from a slice of domain User entities.
-func FromEntities(users []*user.User) []*UserResponse {
+func FromEntities(users []*domainUser.User) []*UserResponse {
 	responses := make([]*UserResponse, len(users))
 	for i, u := range users {
 		responses[i] = FromEntity(u)

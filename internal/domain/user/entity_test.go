@@ -21,6 +21,7 @@ func TestUserEntity(t *testing.T) {
 				CreatedAt: now,
 			},
 			check: func(t *testing.T, u User) {
+				t.Helper()
 				if u.ID != 1 {
 					t.Errorf("Expected ID to be 1, got %d", u.ID)
 				}
@@ -39,6 +40,7 @@ func TestUserEntity(t *testing.T) {
 			name: "zero value user",
 			user: User{},
 			check: func(t *testing.T, u User) {
+				t.Helper()
 				if u.ID != 0 {
 					t.Errorf("Expected ID to be 0, got %d", u.ID)
 				}

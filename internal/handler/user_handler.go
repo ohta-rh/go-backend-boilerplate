@@ -1,9 +1,11 @@
 package handler
 
 import (
+	"errors"
 	"net/http"
 	"strconv"
 
+	domainUser "easy-go-backend/internal/domain/user"
 	"easy-go-backend/internal/schema"
 	"easy-go-backend/internal/usecase"
 
@@ -32,7 +34,13 @@ func (h *UserHandler) GetUser(c *gin.Context) {
 
 	user, err := h.userInteractor.GetUser(c, id)
 	if err != nil {
+		if errors.Is(err, domainUser.ErrUserNotFound) {
+			c.JSON(http.StatusNotFound, gin.H{"error": "User not found"})
+			return
+		}
+
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+
 		return
 	}
 
@@ -77,7 +85,13 @@ func (h *UserHandler) UpdateUser(c *gin.Context) {
 
 	updatedUser, err := h.userInteractor.UpdateUser(c, userEntity)
 	if err != nil {
+		if errors.Is(err, domainUser.ErrUserNotFound) {
+			c.JSON(http.StatusNotFound, gin.H{"error": "User not found"})
+			return
+		}
+
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+
 		return
 	}
 
@@ -93,7 +107,13 @@ func (h *UserHandler) DeleteUser(c *gin.Context) {
 	}
 
 	if err := h.userInteractor.DeleteUser(c, id); err != nil {
+		if errors.Is(err, domainUser.ErrUserNotFound) {
+			c.JSON(http.StatusNotFound, gin.H{"error": "User not found"})
+			return
+		}
+
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+
 		return
 	}
 
