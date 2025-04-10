@@ -1,0 +1,61 @@
+services:
+  # PostgreSQLデータベース
+  db:
+    image: postgres:15.4
+    container_name: example-db
+    restart: always
+    environment:
+      POSTGRES_HOST_AUTH_METHOD: trust
+      POSTGRES_DB: app
+      POSTGRES_USER: root
+      POSTGRES_PASSWORD: password
+    ports:
+      - 5632:5432
+    volumes:
+      - db:/var/lib/postgresql/data
+    networks:
+      - overlay
+    platform: linux/x86_64
+    tty: true
+
+  api:
+    container_name: example-api
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "9090:8080"
+    # ホットリロード用のボリュームマウント（ソースコードの変更を検知）
+    volumes:
+      - .:/app
+      # - ./tmp:/app/tmp # 一時ファイル用（必要に応じて）
+    # 環境変数設定
+    environment:
+      - GO_ENV=development
+    # コンテナが停止したら自動的に削除
+    restart: unless-stopped
+    # ヘルスチェック設定（必要に応じてコメントを外して使用）
+    # 方法1: コンテナが動作しているかの基本チェック
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/health"]
+      interval: 60s
+      timeout: 5s
+      retries: 2
+      start_period: 20s
+    
+    # アプリケーションを実行
+    command: go run cmd/api/main.go
+    # デバッグ用の追加設定（必要に応じてコメントを外してください）
+    # ports:
+    #   - "2345:2345"  # Delveデバッガー用ポート
+    # PostgreSQLサービスとの依存関係
+    depends_on:
+      - db
+    tty: true
+    networks:
+      - overlay
+
+volumes:
+  db:
+networks:
+  overlay:

@@ -1,0 +1,55 @@
+# .air.toml file
+# Hot reload configuration
+
+# Root directory
+root = "."
+tmp_dir = "tmp"
+
+[build]
+# Command to execute when building
+cmd = "go build -o ./tmp/main ./cmd/api"
+# Binary to execute after build
+bin = "./tmp/main"
+# File extensions to watch
+include_ext = ["go", "tpl", "tmpl", "html"]
+# Directories to exclude
+exclude_dir = ["assets", "tmp", "vendor"]
+# Files to exclude
+exclude_file = []
+# Directories to include
+include_dir = []
+# Files to stop watching
+exclude_regex = ["_test.go"]
+# Whether to exclude unchanged files
+exclude_unchanged = true
+# Command to execute after build
+follow_symlink = true
+# Whether to follow symlinks
+full_bin = ""
+# Full binary path
+log = "air.log"
+# Log file
+delay = 1000
+# Delay for file change detection (milliseconds)
+stop_on_error = true
+# Whether to stop on error
+send_interrupt = false
+# Whether to send interrupt signal
+kill_delay = 500
+# Delay before force killing process (milliseconds)
+
+[log]
+# Log detail level
+time = false
+
+[color]
+# Color output
+main = "magenta"
+watcher = "cyan"
+build = "yellow"
+runner = "green"
+
+[misc]
+# Miscellaneous settings
+clean_on_exit = true
+# Whether to clean up tmp directory on exit
