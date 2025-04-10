@@ -104,20 +104,41 @@ This project is designed according to the principles of [Clean Architecture](htt
 
 ### Testing
 
-The project includes automated tests for all components except the `ent` directory, which is excluded from test runs.
+The project includes automated tests for all components except the `ent` directory, which is excluded from test runs. Each layer of the architecture has its own tests:
+
+- **Domain Layer**: Tests for business entities and their behavior
+- **Use Case Layer**: Tests for application logic and business rules
+- **Repository Layer**: Tests for data access implementations
+- **Handler Layer**: Tests for HTTP request handling
+- **Schema Layer**: Tests for data transformation between API and domain models
+- **Infrastructure Layer**: Tests for external service integrations
+
+Run tests with:
 
 ```bash
 make test       # Run tests (excluding ent directory)
 make test.cover # Run tests with coverage (excluding ent directory)
+make test.pkg   # Run tests for a specific package
 ```
 
 ### Linting
 
-The project uses GolangCI-Lint for code quality checks. Run linting with:
+The project uses GolangCI-Lint for code quality checks and static analysis. This helps maintain code quality by detecting:
+
+- Unused imports and variables
+- Potential nil pointer dereferences
+- Code style issues
+- Possible bugs and anti-patterns
+- And many other code quality issues
+
+Run linting with:
 
 ```bash
-make lint
+make lint       # Run linters and automatically fix issues where possible
+make api.lint.check  # Run linters without auto-fixing (useful for CI)
 ```
+
+When adding new code, always ensure it passes both tests and linting checks before committing.
 
 ### CI/CD
 
