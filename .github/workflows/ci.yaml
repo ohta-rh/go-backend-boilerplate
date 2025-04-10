@@ -21,13 +21,12 @@ jobs:
 
       - name: Install dependencies
         run: |
-          go install github.com/golangci/golangci-lint/cmd/golangci-lint@latest
           go mod download
           go mod tidy
+          go install github.com/golangci/golangci-lint/cmd/golangci-lint@latest
 
       - name: Run linter
         run: |
           go vet ./...
           go fmt ./...
-          golangci-lint run
-
+          $(go env GOPATH)/bin/golangci-lint run
