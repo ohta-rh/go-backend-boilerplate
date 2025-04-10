@@ -20,8 +20,13 @@ jobs:
           cache: true
 
       - name: Install dependencies
-        run: make api.install
+        run: |
+          go mod download
+          go mod tidy
 
       - name: Run linter
-        run: make api.lint.check
+        run: |
+          go vet ./...
+          go fmt ./...
+          golangci-lint run
 
