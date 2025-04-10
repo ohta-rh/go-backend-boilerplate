@@ -65,10 +65,14 @@ api.install-lint:
 # Help
 help:
 	@echo "Available commands:"
-	@echo "  make api.install      - Install dependencies"
-	@echo "  make api.test         - Run all tests"
-	@echo "  make api.test.cover   - Run tests with coverage"
-	@echo "  make api.lint         - Run code quality checks"
+	@echo "  make help           - Show this help"
+	@echo "  make up             - Start the containers"
+	@echo "  make down           - Stop the containers"
+	@echo "  make api.install    - Install dependencies"
+	@echo "  make api.test       - Run all tests"
+	@echo "  make api.test.cover - Run tests with coverage"
+	@echo "  make api.lint       - Run code quality checks"
+	@echo "  make api.lint.check - Check code quality"
 	@echo "  make api.install-lint - Install golangci-lint"
 	@echo "  make api.install-air  - Install Air for hot reload"
 	@echo "  make api.dev          - Run with Air hot reload"
