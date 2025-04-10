@@ -115,9 +115,6 @@ issues:
     - mocks/
   max-issues-per-linter: 0
   max-same-issues: 0
-  fix: true
-  new: true
-  new-from-rev: HEAD~1
 
 output:
   sort-results: true
