@@ -24,6 +24,11 @@ jobs:
           go mod download
           go mod tidy
           go install github.com/golangci/golangci-lint/cmd/golangci-lint@latest
+          go install golang.org/x/tools/gopls/internal/analysis/modernize/cmd/modernize@latest
+
+      - name: Verify modernize
+        run: |
+          modernize -test ../..
 
       - name: Run linter
         run: |
