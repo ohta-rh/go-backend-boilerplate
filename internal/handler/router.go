@@ -1,8 +1,6 @@
 package handler
 
 import (
-	"net/http"
-
 	"easy-go-backend/internal/usecase"
 
 	"github.com/gin-gonic/gin"
@@ -13,31 +11,20 @@ func SetupRouter(userInteractor *usecase.UserInteractor) *gin.Engine {
 	// デフォルトのミドルウェア（Logger, Recovery）を使用
 	r := gin.Default()
 
-	// ヘルスチェック用エンドポイント
-	r.GET("/health", func(c *gin.Context) {
-		c.JSON(http.StatusOK, gin.H{
-			"status": "ok",
-		})
-	})
+	// ヘルスチェックハンドラーの登録
+	healthHandler := NewHealthHandler()
+	healthHandler.RegisterRoutes(r)
 
 	// APIグループ
 	v1 := r.Group("/api/v1")
 	{
-		// Hello Worldエンドポイント
-		v1.GET("/hello", func(c *gin.Context) {
-			c.JSON(http.StatusOK, gin.H{
-				"message": "Hello, World!",
-			})
-		})
+		// Hello Worldハンドラーの登録
+		helloHandler := NewHelloHandler()
+		helloHandler.RegisterRoutes(v1)
 
-		// User routes
+		// ユーザーハンドラーの登録
 		userHandler := NewUserHandler(userInteractor)
-		users := v1.Group("/users")
-		users.GET("", userHandler.GetAllUsers)
-		users.POST("", userHandler.CreateUser)
-		users.GET("/:id", userHandler.GetUser)
-		users.PUT("/:id", userHandler.UpdateUser)
-		users.DELETE("/:id", userHandler.DeleteUser)
+		userHandler.RegisterRoutes(v1)
 	}
 
 	return r
