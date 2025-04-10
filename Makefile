@@ -5,6 +5,12 @@
 
 init: api.install
 
+up:
+	docker-compose up -d
+
+down:
+	docker-compose down
+
 # Install packages
 api.install:
 	docker-compose exec api go mod download
