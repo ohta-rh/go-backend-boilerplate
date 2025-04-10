@@ -122,12 +122,12 @@ graph TD
 
 3. Start Docker containers:
    ```bash
-   make up
+   docker-compose up -d
    ```
 
 4. Start development server:
    ```bash
-   make dev
+   make api.dev
    ```
 
 ## Development Guidelines
@@ -235,9 +235,8 @@ graph TD
 Run tests with:
 
 ```bash
-make test       # Run tests (excluding ent directory)
-make test.cover # Run tests with coverage (excluding ent directory)
-make test.pkg   # Run tests for a specific package
+make api.test       # Run tests (excluding ent directory)
+make api.test.cover # Run tests with coverage (excluding ent directory)
 ```
 
 ### Linting
@@ -253,8 +252,7 @@ The project uses GolangCI-Lint for code quality checks and static analysis. This
 Run linting with:
 
 ```bash
-make lint       # Run linters and automatically fix issues where possible
-make api.lint.check  # Run linters without auto-fixing (useful for CI)
+make api.lint         # Run linters and automatically fix issues where possible
 ```
 
 When adding new code, always ensure it passes both tests and linting checks before committing.
@@ -287,7 +285,7 @@ flowchart LR
 ### Building
 
 ```bash
-make build
+make api.run
 ```
 
 ## Dependency Rules

@@ -1,8 +1,7 @@
 # Makefile commands for Golang container operations (using docker-compose)
 
 # Service name (fixed)
-
-.PHONY: install test test.cover lint install-lint help api.install-air api.dev api.ent.init api.ent.generate api.ent.run api.db.connect api.ent.install api.ent.setup api.create-infrastructure api.create-domain api.create-repository api.create-usecase api.create-handler api.setup-all api.db.setup api.test.health api.test.hello api.test.users.create api.test.users.list api.test.users.get api.test.users.update api.test.users.delete api.test.all api.install-lint api.install api.bash api.lint api.ent.gen api.run
+.PHONY: api.install api.test api.test.cover api.help api.install-air api.dev api.ent.init api.ent.generate api.ent.run api.db.connect api.ent.install api.ent.setup api.create-infrastructure api.create-domain api.create-repository api.create-usecase api.create-handler api.setup-all api.db.setup api.test.health api.test.hello api.test.users.create api.test.users.list api.test.users.get api.test.users.update api.test.users.delete api.test.all api.install-lint api.bash api.lint api.ent.gen api.run
 
 init: api.install
 
@@ -12,18 +11,12 @@ api.install:
 	docker-compose exec api go mod tidy
 
 # Run tests (excluding ent directory)
-test:
+api.test:
 	docker-compose exec api go test $(shell docker-compose exec -T api go list ./... | grep -v "/ent")
 
 # Run tests with coverage (excluding ent directory)
-test.cover:
+api.test.cover:
 	docker-compose exec api go test -cover $(shell docker-compose exec -T api go list ./... | grep -v "/ent")
-
-# Run linting
-lint:
-	docker-compose exec api go fmt ./...
-	docker-compose exec api go vet ./...
-	docker-compose exec api golangci-lint run --fix
 
 api.bash:
 	docker-compose exec api bash
@@ -65,9 +58,9 @@ api.install-lint:
 help:
 	@echo "Available commands:"
 	@echo "  make api.install      - Install dependencies"
-	@echo "  make test             - Run all tests"
-	@echo "  make test-cover       - Run tests with coverage"
-	@echo "  make lint             - Run code quality checks"
+	@echo "  make api.test         - Run all tests"
+	@echo "  make api.test.cover   - Run tests with coverage"
+	@echo "  make api.lint         - Run code quality checks"
 	@echo "  make api.install-lint - Install golangci-lint"
 	@echo "  make api.install-air  - Install Air for hot reload"
 	@echo "  make api.dev          - Run with Air hot reload"
