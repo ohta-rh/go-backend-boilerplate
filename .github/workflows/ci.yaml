@@ -32,6 +32,4 @@ jobs:
 
       - name: Run linter
         run: |
-          go vet ./...
-          go fmt ./...
           $(go env GOPATH)/bin/golangci-lint run
