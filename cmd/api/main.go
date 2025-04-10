@@ -12,7 +12,8 @@ import (
 	"github.com/tetsuyaohta/go-backend-boilerplate/internal/usecase"
 )
 
-func main() {
+// run is the actual application logic, separate from main to properly handle defer.
+func run() error {
 	// 環境変数の取得
 	env := os.Getenv("GO_ENV")
 	if env == "" {
@@ -36,7 +37,7 @@ func main() {
 	// Database client initialization
 	client, err := database.NewClient(dsn, 5)
 	if err != nil {
-		log.Fatalf("Failed to initialize database client: %v", err)
+		return err
 	}
 	defer client.Close()
 
@@ -58,7 +59,14 @@ func main() {
 	}
 
 	log.Printf("Server starting on port %s...\n", port)
-	if err := r.Run(":" + port); err != nil {
-		log.Fatalf("Failed to start server: %v", err)
+
+	// Run the server and handle the error
+	return r.Run(":" + port)
+}
+
+func main() {
+	if err := run(); err != nil {
+		log.Printf("Application error: %v", err)
+		os.Exit(1)
 	}
 }

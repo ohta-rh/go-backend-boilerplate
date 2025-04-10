@@ -7,7 +7,7 @@ import (
 	"github.com/tetsuyaohta/go-backend-boilerplate/internal/usecase"
 )
 
-// SetupRouter はGinのルーターを設定し、すべてのルートを定義します
+// SetupRouter はGinのルーターを設定し、すべてのルートを定義します.
 func SetupRouter(userInteractor *usecase.UserInteractor) *gin.Engine {
 	// デフォルトのミドルウェア（Logger, Recovery）を使用
 	r := gin.Default()
@@ -32,13 +32,11 @@ func SetupRouter(userInteractor *usecase.UserInteractor) *gin.Engine {
 		// User routes
 		userHandler := NewUserHandler(userInteractor)
 		users := v1.Group("/users")
-		{
-			users.GET("", userHandler.GetAllUsers)
-			users.POST("", userHandler.CreateUser)
-			users.GET("/:id", userHandler.GetUser)
-			users.PUT("/:id", userHandler.UpdateUser)
-			users.DELETE("/:id", userHandler.DeleteUser)
-		}
+		users.GET("", userHandler.GetAllUsers)
+		users.POST("", userHandler.CreateUser)
+		users.GET("/:id", userHandler.GetUser)
+		users.PUT("/:id", userHandler.UpdateUser)
+		users.DELETE("/:id", userHandler.DeleteUser)
 	}
 
 	return r

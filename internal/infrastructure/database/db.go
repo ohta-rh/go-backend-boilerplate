@@ -9,9 +9,10 @@ import (
 	"github.com/tetsuyaohta/go-backend-boilerplate/ent"
 )
 
-// NewClient creates a new ent client with connection to PostgreSQL
+// NewClient creates a new ent client with connection to PostgreSQL.
 func NewClient(dsn string, maxRetries int) (*ent.Client, error) {
 	var client *ent.Client
+
 	var err error
 
 	for i := 0; i < maxRetries; i++ {
@@ -19,6 +20,7 @@ func NewClient(dsn string, maxRetries int) (*ent.Client, error) {
 		if err == nil {
 			break
 		}
+
 		log.Printf("Failed to connect to database (attempt %d/%d): %v", i+1, maxRetries, err)
 		time.Sleep(time.Duration(i+1) * time.Second)
 	}

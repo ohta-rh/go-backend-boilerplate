@@ -4,7 +4,7 @@ import (
 	"time"
 )
 
-// User represents a user entity in the domain layer
+// User represents a user entity in the domain layer.
 type User struct {
 	ID        int       `json:"id"`
 	Name      string    `json:"name"`

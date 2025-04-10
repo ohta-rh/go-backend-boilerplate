@@ -63,9 +63,7 @@ func TestUserEntity(t *testing.T) {
 }
 
 func TestUserFieldValidation(t *testing.T) {
-	// このテストは実際のバリデーションロジックがUser構造体に追加された場合に拡張できます
 	// 現在はフィールドの存在確認のみ実装
-
 	t.Run("user structure has expected fields", func(t *testing.T) {
 		user := User{
 			ID:        123,
@@ -78,12 +76,15 @@ func TestUserFieldValidation(t *testing.T) {
 		if user.ID != 123 {
 			t.Error("ID field not properly set/accessed")
 		}
+
 		if user.Name != "John Doe" {
 			t.Error("Name field not properly set/accessed")
 		}
+
 		if user.Email != "john@example.com" {
 			t.Error("Email field not properly set/accessed")
 		}
+
 		if user.CreatedAt.IsZero() {
 			t.Error("CreatedAt field not properly set/accessed")
 		}

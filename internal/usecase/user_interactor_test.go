@@ -8,53 +8,56 @@ import (
 	"github.com/tetsuyaohta/go-backend-boilerplate/internal/domain/user"
 )
 
-// MockUserRepository はテスト用のモックリポジトリです
+// MockUserRepository はテスト用のモックリポジトリです.
 type MockUserRepository struct {
 	users map[int]*user.User
 }
 
-// NewMockUserRepository はモックリポジトリを作成します
+// NewMockUserRepository はモックリポジトリを作成します.
 func NewMockUserRepository() *MockUserRepository {
 	return &MockUserRepository{
 		users: make(map[int]*user.User),
 	}
 }
 
-// GetByID はIDによるユーザー取得をモックします
+// GetByID はIDによるユーザー取得をモックします.
 func (m *MockUserRepository) GetByID(ctx context.Context, id int) (*user.User, error) {
 	if u, ok := m.users[id]; ok {
 		return u, nil
 	}
+
 	return nil, nil
 }
 
-// Create はユーザー作成をモックします
+// Create はユーザー作成をモックします.
 func (m *MockUserRepository) Create(ctx context.Context, u *user.User) (*user.User, error) {
 	m.users[u.ID] = u
 	return u, nil
 }
 
-// Update はユーザー更新をモックします
+// Update はユーザー更新をモックします.
 func (m *MockUserRepository) Update(ctx context.Context, u *user.User) (*user.User, error) {
 	if _, ok := m.users[u.ID]; ok {
 		m.users[u.ID] = u
 		return u, nil
 	}
+
 	return nil, nil
 }
 
-// Delete はユーザー削除をモックします
+// Delete はユーザー削除をモックします.
 func (m *MockUserRepository) Delete(ctx context.Context, id int) error {
 	delete(m.users, id)
 	return nil
 }
 
-// GetAll は全ユーザー取得をモックします
+// GetAll は全ユーザー取得をモックします.
 func (m *MockUserRepository) GetAll(ctx context.Context) ([]*user.User, error) {
-	var users []*user.User
+	users := make([]*user.User, 0, len(m.users))
 	for _, u := range m.users {
 		users = append(users, u)
 	}
+
 	return users, nil
 }
 

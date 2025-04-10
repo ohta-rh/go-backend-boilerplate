@@ -4,7 +4,7 @@ import (
 	"context"
 )
 
-// Repository defines the methods to interact with user storage
+// Repository defines the methods to interact with user storage.
 type Repository interface {
 	// GetByID retrieves a user by ID
 	GetByID(ctx context.Context, id int) (*User, error)

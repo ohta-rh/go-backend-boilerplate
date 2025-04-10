@@ -2,7 +2,7 @@
 
 # Service name (fixed)
 
-.PHONY: add-pkg install test test.cover test.pkg lint install-lint help api.install-air api.dev api.ent.init api.ent.generate api.ent.run api.db.connect api.ent.install api.ent.setup api.create-infrastructure api.create-domain api.create-repository api.create-usecase api.create-handler api.setup-all api.db.setup api.test.health api.test.hello api.test.users.create api.test.users.list api.test.users.get api.test.users.update api.test.users.delete api.test.all
+.PHONY: add-pkg install test test.cover test.pkg lint install-lint help api.install-air api.dev api.ent.init api.ent.generate api.ent.run api.db.connect api.ent.install api.ent.setup api.create-infrastructure api.create-domain api.create-repository api.create-usecase api.create-handler api.setup-all api.db.setup api.test.health api.test.hello api.test.users.create api.test.users.list api.test.users.get api.test.users.update api.test.users.delete api.test.all api.install-lint
 
 init: api.install
 # Add package
@@ -30,21 +30,12 @@ test.pkg:
 
 # Run linting
 lint:
+	docker-compose exec api go fmt ./...
 	docker-compose exec api go vet ./...
-	@if [ -x "$$(docker-compose exec api which golangci-lint 2>/dev/null)" ]; then \
-		docker-compose exec api golangci-lint run; \
-	else \
-		echo "golangci-lint is not installed. To install:"; \
-		echo "make api.install-lint"; \
-	fi
+	docker-compose exec api golangci-lint run --fix
+
 api.bash:
 	docker-compose exec api bash
-
-# Install Air for hot reload
-api.install-air:
-	docker-compose exec api go install github.com/air-verse/air@latest
-	docker-compose exec api bash -c "echo 'export PATH=\$$PATH:/go/bin' >> ~/.bashrc"
-	@echo "Air installed! You can now use 'make api.dev' to run with hot reload"
 
 # Run with Air hot reload
 api.dev:
@@ -101,6 +92,11 @@ api.db.setup:
 
 api.ent.gen:
 	docker-compose exec api go run cmd/entgen/entgen.go
+
+# Install golangci-lint
+api.install-lint:
+	docker-compose exec api go install github.com/golangci/golangci-lint/cmd/golangci-lint@latest
+	@echo "golangci-lint installed successfully! Now you can use 'make api.lint'"
 
 # Help
 help:

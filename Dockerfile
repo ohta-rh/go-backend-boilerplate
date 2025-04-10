@@ -6,8 +6,7 @@ WORKDIR /app
 # ソースコードをコンテナにコピー
 COPY . .
 
-# Goパッケージのインストール
-RUN go mod download
+# Install Air and golangci-lint
+RUN go install github.com/air-verse/air@latest
+RUN go install github.com/golangci/golangci-lint/cmd/golangci-lint@latest
 
-# エントリポイント設定（開発環境用）
-CMD ["air", "-c", ".air.toml"]

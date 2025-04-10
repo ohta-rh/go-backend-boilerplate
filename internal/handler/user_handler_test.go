@@ -14,105 +14,114 @@ import (
 	"github.com/tetsuyaohta/go-backend-boilerplate/internal/domain/user"
 )
 
-// MockUserInteractor はテスト用のユースケースモックです
+// MockUserInteractor はテスト用のユースケースモックです.
 type MockUserInteractor struct {
 	users map[int]*user.User
 	err   error
 }
 
-// NewMockUserInteractor はモックインタラクターを作成します
+// NewMockUserInteractor はモックインタラクターを作成します.
 func NewMockUserInteractor() *MockUserInteractor {
 	return &MockUserInteractor{
 		users: make(map[int]*user.User),
 	}
 }
 
-// SetError はテスト用にエラーを設定します
+// SetError はテスト用にエラーを設定します.
 func (m *MockUserInteractor) SetError(err error) {
 	m.err = err
 }
 
-// GetUser はユーザー取得をモックします
+// GetUser はユーザー取得をモックします.
 func (m *MockUserInteractor) GetUser(ctx context.Context, id int) (*user.User, error) {
 	if m.err != nil {
 		return nil, m.err
 	}
+
 	if u, ok := m.users[id]; ok {
 		return u, nil
 	}
+
 	return nil, nil
 }
 
-// CreateUser はユーザー作成をモックします
+// CreateUser はユーザー作成をモックします.
 func (m *MockUserInteractor) CreateUser(ctx context.Context, u *user.User) (*user.User, error) {
 	if m.err != nil {
 		return nil, m.err
 	}
+
 	if u.ID == 0 {
 		// 実際のアプリケーションでは自動ID採番されるロジックをモック
 		u.ID = len(m.users) + 1
 	}
+
 	m.users[u.ID] = u
+
 	return u, nil
 }
 
-// UpdateUser はユーザー更新をモックします
+// UpdateUser はユーザー更新をモックします.
 func (m *MockUserInteractor) UpdateUser(ctx context.Context, u *user.User) (*user.User, error) {
 	if m.err != nil {
 		return nil, m.err
 	}
+
 	if _, ok := m.users[u.ID]; ok {
 		m.users[u.ID] = u
 		return u, nil
 	}
+
 	return nil, errors.New("user not found")
 }
 
-// DeleteUser はユーザー削除をモックします
+// DeleteUser はユーザー削除をモックします.
 func (m *MockUserInteractor) DeleteUser(ctx context.Context, id int) error {
 	if m.err != nil {
 		return m.err
 	}
+
 	if _, ok := m.users[id]; !ok {
 		return errors.New("user not found")
 	}
+
 	delete(m.users, id)
+
 	return nil
 }
 
-// GetAllUsers は全ユーザー取得をモックします
+// GetAllUsers は全ユーザー取得をモックします.
 func (m *MockUserInteractor) GetAllUsers(ctx context.Context) ([]*user.User, error) {
 	if m.err != nil {
 		return nil, m.err
 	}
-	var users []*user.User
+
+	users := make([]*user.User, 0, len(m.users))
 	for _, u := range m.users {
 		users = append(users, u)
 	}
+
 	return users, nil
 }
 
-// TestUserHandler はテスト用のハンドラー実装です
-type TestUserHandler struct {
-	interactor *MockUserInteractor
+// UserHandlerHelper はハンドラーのヘルパーメソッドを定義します.
+type UserHandlerHelper interface {
+	handleGetUser(c *gin.Context, id int) (*user.User, error)
+	handleCreateUser(c *gin.Context, userDTO *user.User) (*user.User, error)
+	handleUpdateUser(c *gin.Context, id int, userDTO *user.User) (*user.User, error)
+	handleDeleteUser(c *gin.Context, id int) error
+	handleGetAllUsers(c *gin.Context) ([]*user.User, error)
 }
 
-// NewTestUserHandler はテスト用のハンドラーを作成します
-func NewTestUserHandler(mi *MockUserInteractor) *TestUserHandler {
-	return &TestUserHandler{
-		interactor: mi,
-	}
-}
-
-// GetUser はGET /users/:id のハンドラーです
-func (h *TestUserHandler) GetUser(c *gin.Context) {
+// handleGetUserRequest handles GET /users/:id requests.
+func handleGetUserRequest(c *gin.Context, handler UserHandlerHelper) {
 	id, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid user ID"})
 		return
 	}
 
-	user, err := h.interactor.GetUser(c, id)
+	user, err := handler.handleGetUser(c, id)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
@@ -121,15 +130,15 @@ func (h *TestUserHandler) GetUser(c *gin.Context) {
 	c.JSON(http.StatusOK, user)
 }
 
-// CreateUser はPOST /users のハンドラーです
-func (h *TestUserHandler) CreateUser(c *gin.Context) {
+// handleCreateUserRequest handles POST /users requests.
+func handleCreateUserRequest(c *gin.Context, handler UserHandlerHelper) {
 	var userDTO user.User
 	if err := c.ShouldBindJSON(&userDTO); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 
-	createdUser, err := h.interactor.CreateUser(c, &userDTO)
+	createdUser, err := handler.handleCreateUser(c, &userDTO)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
@@ -138,8 +147,8 @@ func (h *TestUserHandler) CreateUser(c *gin.Context) {
 	c.JSON(http.StatusCreated, createdUser)
 }
 
-// UpdateUser はPUT /users/:id のハンドラーです
-func (h *TestUserHandler) UpdateUser(c *gin.Context) {
+// handleUpdateUserRequest handles PUT /users/:id requests.
+func handleUpdateUserRequest(c *gin.Context, handler UserHandlerHelper) {
 	id, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid user ID"})
@@ -153,7 +162,8 @@ func (h *TestUserHandler) UpdateUser(c *gin.Context) {
 	}
 
 	userDTO.ID = id
-	updatedUser, err := h.interactor.UpdateUser(c, &userDTO)
+
+	updatedUser, err := handler.handleUpdateUser(c, id, &userDTO)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
@@ -162,15 +172,15 @@ func (h *TestUserHandler) UpdateUser(c *gin.Context) {
 	c.JSON(http.StatusOK, updatedUser)
 }
 
-// DeleteUser はDELETE /users/:id のハンドラーです
-func (h *TestUserHandler) DeleteUser(c *gin.Context) {
+// handleDeleteUserRequest handles DELETE /users/:id requests.
+func handleDeleteUserRequest(c *gin.Context, handler UserHandlerHelper) {
 	id, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid user ID"})
 		return
 	}
 
-	if err := h.interactor.DeleteUser(c, id); err != nil {
+	if err := handler.handleDeleteUser(c, id); err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
@@ -178,9 +188,9 @@ func (h *TestUserHandler) DeleteUser(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"message": "User deleted successfully"})
 }
 
-// GetAllUsers はGET /users のハンドラーです
-func (h *TestUserHandler) GetAllUsers(c *gin.Context) {
-	users, err := h.interactor.GetAllUsers(c)
+// handleGetAllUsersRequest handles GET /users requests.
+func handleGetAllUsersRequest(c *gin.Context, handler UserHandlerHelper) {
+	users, err := handler.handleGetAllUsers(c)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
@@ -189,7 +199,85 @@ func (h *TestUserHandler) GetAllUsers(c *gin.Context) {
 	c.JSON(http.StatusOK, users)
 }
 
-// setupTestRouter はテスト用のルーターを作成します
+// handleUserRequest is a router for different user operations.
+func handleUserRequest(c *gin.Context, handler UserHandlerHelper, action string) {
+	switch action {
+	case "get":
+		handleGetUserRequest(c, handler)
+	case "create":
+		handleCreateUserRequest(c, handler)
+	case "update":
+		handleUpdateUserRequest(c, handler)
+	case "delete":
+		handleDeleteUserRequest(c, handler)
+	case "getAll":
+		handleGetAllUsersRequest(c, handler)
+	}
+}
+
+// TestUserHandler はテスト用のハンドラー実装です.
+type TestUserHandler struct {
+	interactor *MockUserInteractor
+}
+
+// NewTestUserHandler はテスト用のハンドラーを作成します.
+func NewTestUserHandler(mi *MockUserInteractor) *TestUserHandler {
+	return &TestUserHandler{
+		interactor: mi,
+	}
+}
+
+// handleGetUser はユーザー取得処理を行います.
+func (h *TestUserHandler) handleGetUser(c *gin.Context, id int) (*user.User, error) {
+	return h.interactor.GetUser(c, id)
+}
+
+// handleCreateUser はユーザー作成処理を行います.
+func (h *TestUserHandler) handleCreateUser(c *gin.Context, userDTO *user.User) (*user.User, error) {
+	return h.interactor.CreateUser(c, userDTO)
+}
+
+// handleUpdateUser はユーザー更新処理を行います.
+func (h *TestUserHandler) handleUpdateUser(c *gin.Context, id int, userDTO *user.User) (*user.User, error) {
+	return h.interactor.UpdateUser(c, userDTO)
+}
+
+// handleDeleteUser はユーザー削除処理を行います.
+func (h *TestUserHandler) handleDeleteUser(c *gin.Context, id int) error {
+	return h.interactor.DeleteUser(c, id)
+}
+
+// handleGetAllUsers は全ユーザー取得処理を行います.
+func (h *TestUserHandler) handleGetAllUsers(c *gin.Context) ([]*user.User, error) {
+	return h.interactor.GetAllUsers(c)
+}
+
+// GetUser はGET /users/:id のハンドラーです.
+func (h *TestUserHandler) GetUser(c *gin.Context) {
+	handleUserRequest(c, h, "get")
+}
+
+// CreateUser はPOST /users のハンドラーです.
+func (h *TestUserHandler) CreateUser(c *gin.Context) {
+	handleUserRequest(c, h, "create")
+}
+
+// UpdateUser はPUT /users/:id のハンドラーです.
+func (h *TestUserHandler) UpdateUser(c *gin.Context) {
+	handleUserRequest(c, h, "update")
+}
+
+// DeleteUser はDELETE /users/:id のハンドラーです.
+func (h *TestUserHandler) DeleteUser(c *gin.Context) {
+	handleUserRequest(c, h, "delete")
+}
+
+// GetAllUsers はGET /users のハンドラーです.
+func (h *TestUserHandler) GetAllUsers(c *gin.Context) {
+	handleUserRequest(c, h, "getAll")
+}
+
+// setupTestRouter はテスト用のルーターを作成します.
 func setupTestRouter(mockInteractor *MockUserInteractor) *gin.Engine {
 	gin.SetMode(gin.TestMode)
 	r := gin.New()
@@ -199,28 +287,26 @@ func setupTestRouter(mockInteractor *MockUserInteractor) *gin.Engine {
 
 	// ルートの設定
 	v1 := r.Group("/api/v1")
-	{
-		users := v1.Group("/users")
-		{
-			users.GET("", userHandler.GetAllUsers)
-			users.POST("", userHandler.CreateUser)
-			users.GET("/:id", userHandler.GetUser)
-			users.PUT("/:id", userHandler.UpdateUser)
-			users.DELETE("/:id", userHandler.DeleteUser)
-		}
-	}
+	users := v1.Group("/users")
+	users.GET("", userHandler.GetAllUsers)
+	users.POST("", userHandler.CreateUser)
+	users.GET("/:id", userHandler.GetUser)
+	users.PUT("/:id", userHandler.UpdateUser)
+	users.DELETE("/:id", userHandler.DeleteUser)
 
 	return r
 }
 
-// performRequest はテスト用のHTTPリクエストを実行します
+// performRequest はテスト用のHTTPリクエストを実行します.
 func performRequest(r http.Handler, method, path string, body interface{}) *httptest.ResponseRecorder {
 	var reqBody *bytes.Buffer
+
 	if body != nil {
 		jsonBytes, err := json.Marshal(body)
 		if err != nil {
 			panic(err)
 		}
+
 		reqBody = bytes.NewBuffer(jsonBytes)
 	} else {
 		reqBody = bytes.NewBuffer(nil)
@@ -230,8 +316,10 @@ func performRequest(r http.Handler, method, path string, body interface{}) *http
 	if body != nil {
 		req.Header.Set("Content-Type", "application/json")
 	}
+
 	w := httptest.NewRecorder()
 	r.ServeHTTP(w, req)
+
 	return w
 }
 
@@ -261,6 +349,7 @@ func TestGetUser(t *testing.T) {
 
 		// レスポンスボディをデコード
 		var response user.User
+
 		err := json.Unmarshal(w.Body.Bytes(), &response)
 		if err != nil {
 			t.Fatalf("Failed to unmarshal response: %v", err)
@@ -270,9 +359,11 @@ func TestGetUser(t *testing.T) {
 		if response.ID != testUser.ID {
 			t.Errorf("Expected user ID %d, got %d", testUser.ID, response.ID)
 		}
+
 		if response.Name != testUser.Name {
 			t.Errorf("Expected user name %s, got %s", testUser.Name, response.Name)
 		}
+
 		if response.Email != testUser.Email {
 			t.Errorf("Expected user email %s, got %s", testUser.Email, response.Email)
 		}
@@ -339,6 +430,7 @@ func TestCreateUser(t *testing.T) {
 
 		// レスポンスボディをデコード
 		var response user.User
+
 		err := json.Unmarshal(w.Body.Bytes(), &response)
 		if err != nil {
 			t.Fatalf("Failed to unmarshal response: %v", err)
@@ -348,9 +440,11 @@ func TestCreateUser(t *testing.T) {
 		if response.ID == 0 {
 			t.Error("Expected user ID to be set, got 0")
 		}
+
 		if response.Name != newUser.Name {
 			t.Errorf("Expected user name %s, got %s", newUser.Name, response.Name)
 		}
+
 		if response.Email != newUser.Email {
 			t.Errorf("Expected user email %s, got %s", newUser.Email, response.Email)
 		}
@@ -382,6 +476,7 @@ func TestCreateUser(t *testing.T) {
 		// 無効なデータ（JSON形式ではないデータ）でリクエスト
 		req, _ := http.NewRequest("POST", "/api/v1/users", bytes.NewBuffer([]byte("invalid data")))
 		req.Header.Set("Content-Type", "application/json")
+
 		w := httptest.NewRecorder()
 		router.ServeHTTP(w, req)
 
@@ -416,6 +511,7 @@ func TestGetAllUsers(t *testing.T) {
 
 		// レスポンスボディをデコード
 		var response []*user.User
+
 		err := json.Unmarshal(w.Body.Bytes(), &response)
 		if err != nil {
 			t.Fatalf("Failed to unmarshal response: %v", err)
@@ -431,6 +527,7 @@ func TestGetAllUsers(t *testing.T) {
 		for _, u := range response {
 			foundIDs[u.ID] = true
 		}
+
 		if !foundIDs[1] || !foundIDs[2] {
 			t.Errorf("Expected users with IDs 1 and 2, got %v", foundIDs)
 		}
@@ -453,6 +550,117 @@ func TestGetAllUsers(t *testing.T) {
 	})
 }
 
+func testUpdateExistingUser(t *testing.T, router *gin.Engine, mockInteractor *MockUserInteractor, existingUser *user.User) {
+	// 更新ユーザーデータ
+	updatedUser := &user.User{
+		ID:    existingUser.ID,
+		Name:  "Updated User",
+		Email: "updated@example.com",
+	}
+
+	// リクエストの実行
+	w := performRequest(router, "PUT", "/api/v1/users/"+strconv.Itoa(existingUser.ID), updatedUser)
+
+	// レスポンスの検証
+	if w.Code != http.StatusOK {
+		t.Errorf("Expected status code %d, got %d", http.StatusOK, w.Code)
+	}
+
+	// レスポンスボディをデコード
+	var response user.User
+
+	err := json.Unmarshal(w.Body.Bytes(), &response)
+	if err != nil {
+		t.Fatalf("Failed to unmarshal response: %v", err)
+	}
+
+	// 更新されたユーザーの検証
+	if response.ID != updatedUser.ID {
+		t.Errorf("Expected user ID %d, got %d", updatedUser.ID, response.ID)
+	}
+
+	if response.Name != updatedUser.Name {
+		t.Errorf("Expected user name %s, got %s", updatedUser.Name, response.Name)
+	}
+
+	if response.Email != updatedUser.Email {
+		t.Errorf("Expected user email %s, got %s", updatedUser.Email, response.Email)
+	}
+
+	// 実際にモックのデータが更新されたか確認
+	if mockInteractor.users[existingUser.ID].Name != updatedUser.Name {
+		t.Errorf("Expected user name in mock to be %s, got %s", updatedUser.Name, mockInteractor.users[existingUser.ID].Name)
+	}
+}
+
+func testUpdateNonExistingUser(t *testing.T, router *gin.Engine) {
+	// 存在しないユーザーデータ
+	nonExistingUser := &user.User{
+		ID:    999,
+		Name:  "Non Existing User",
+		Email: "nonexisting@example.com",
+	}
+
+	// リクエストの実行
+	w := performRequest(router, "PUT", "/api/v1/users/999", nonExistingUser)
+
+	// 存在しないユーザーの更新エラーの検証
+	if w.Code != http.StatusInternalServerError {
+		t.Errorf("Expected status code %d, got %d", http.StatusInternalServerError, w.Code)
+	}
+}
+
+func testUpdateUserWithError(t *testing.T, router *gin.Engine, mockInteractor *MockUserInteractor, existingUser *user.User) {
+	// エラーの設定
+	mockInteractor.SetError(errors.New("database error"))
+
+	// 更新ユーザーデータ
+	updatedUser := &user.User{
+		ID:    existingUser.ID,
+		Name:  "Error User",
+		Email: "error@example.com",
+	}
+
+	// リクエストの実行
+	w := performRequest(router, "PUT", "/api/v1/users/"+strconv.Itoa(existingUser.ID), updatedUser)
+
+	// エラーレスポンスの検証
+	if w.Code != http.StatusInternalServerError {
+		t.Errorf("Expected status code %d, got %d", http.StatusInternalServerError, w.Code)
+	}
+
+	// クリーンアップ
+	mockInteractor.SetError(nil)
+}
+
+func testUpdateUserWithInvalidID(t *testing.T, router *gin.Engine) {
+	// 無効なIDでリクエスト
+	updatedUser := &user.User{
+		Name:  "Invalid ID",
+		Email: "invalid@example.com",
+	}
+	w := performRequest(router, "PUT", "/api/v1/users/invalid", updatedUser)
+
+	// 無効なIDでのエラーレスポンスの検証
+	if w.Code != http.StatusBadRequest {
+		t.Errorf("Expected status code %d, got %d", http.StatusBadRequest, w.Code)
+	}
+}
+
+func testUpdateUserWithInvalidData(t *testing.T, router *gin.Engine) {
+	// 無効なデータ（JSON形式ではないデータ）でリクエスト
+	req, _ := http.NewRequest("PUT", "/api/v1/users/1", bytes.NewBuffer([]byte("invalid data")))
+	req.Header.Set("Content-Type", "application/json")
+
+	w := httptest.NewRecorder()
+	router.ServeHTTP(w, req)
+
+	// 無効なデータでのエラーレスポンスの検証
+	if w.Code != http.StatusBadRequest {
+		t.Errorf("Expected status code %d, got %d", http.StatusBadRequest, w.Code)
+	}
+}
+
 func TestUpdateUser(t *testing.T) {
 	// テスト用のモックインタラクター
 	mockInteractor := NewMockUserInteractor()
@@ -469,110 +677,23 @@ func TestUpdateUser(t *testing.T) {
 	router := setupTestRouter(mockInteractor)
 
 	t.Run("update existing user", func(t *testing.T) {
-		// 更新ユーザーデータ
-		updatedUser := &user.User{
-			ID:    existingUser.ID,
-			Name:  "Updated User",
-			Email: "updated@example.com",
-		}
-
-		// リクエストの実行
-		w := performRequest(router, "PUT", "/api/v1/users/"+strconv.Itoa(existingUser.ID), updatedUser)
-
-		// レスポンスの検証
-		if w.Code != http.StatusOK {
-			t.Errorf("Expected status code %d, got %d", http.StatusOK, w.Code)
-		}
-
-		// レスポンスボディをデコード
-		var response user.User
-		err := json.Unmarshal(w.Body.Bytes(), &response)
-		if err != nil {
-			t.Fatalf("Failed to unmarshal response: %v", err)
-		}
-
-		// 更新されたユーザーの検証
-		if response.ID != updatedUser.ID {
-			t.Errorf("Expected user ID %d, got %d", updatedUser.ID, response.ID)
-		}
-		if response.Name != updatedUser.Name {
-			t.Errorf("Expected user name %s, got %s", updatedUser.Name, response.Name)
-		}
-		if response.Email != updatedUser.Email {
-			t.Errorf("Expected user email %s, got %s", updatedUser.Email, response.Email)
-		}
-
-		// 実際にモックのデータが更新されたか確認
-		if mockInteractor.users[existingUser.ID].Name != updatedUser.Name {
-			t.Errorf("Expected user name in mock to be %s, got %s", updatedUser.Name, mockInteractor.users[existingUser.ID].Name)
-		}
+		testUpdateExistingUser(t, router, mockInteractor, existingUser)
 	})
 
 	t.Run("update non-existing user", func(t *testing.T) {
-		// 存在しないユーザーデータ
-		nonExistingUser := &user.User{
-			ID:    999,
-			Name:  "Non Existing User",
-			Email: "nonexisting@example.com",
-		}
-
-		// リクエストの実行
-		w := performRequest(router, "PUT", "/api/v1/users/999", nonExistingUser)
-
-		// 存在しないユーザーの更新エラーの検証
-		if w.Code != http.StatusInternalServerError {
-			t.Errorf("Expected status code %d, got %d", http.StatusInternalServerError, w.Code)
-		}
+		testUpdateNonExistingUser(t, router)
 	})
 
 	t.Run("update user with error", func(t *testing.T) {
-		// エラーの設定
-		mockInteractor.SetError(errors.New("database error"))
-
-		// 更新ユーザーデータ
-		updatedUser := &user.User{
-			ID:    existingUser.ID,
-			Name:  "Error User",
-			Email: "error@example.com",
-		}
-
-		// リクエストの実行
-		w := performRequest(router, "PUT", "/api/v1/users/"+strconv.Itoa(existingUser.ID), updatedUser)
-
-		// エラーレスポンスの検証
-		if w.Code != http.StatusInternalServerError {
-			t.Errorf("Expected status code %d, got %d", http.StatusInternalServerError, w.Code)
-		}
-
-		// クリーンアップ
-		mockInteractor.SetError(nil)
+		testUpdateUserWithError(t, router, mockInteractor, existingUser)
 	})
 
 	t.Run("update user with invalid ID", func(t *testing.T) {
-		// 無効なIDでリクエスト
-		updatedUser := &user.User{
-			Name:  "Invalid ID",
-			Email: "invalid@example.com",
-		}
-		w := performRequest(router, "PUT", "/api/v1/users/invalid", updatedUser)
-
-		// 無効なIDでのエラーレスポンスの検証
-		if w.Code != http.StatusBadRequest {
-			t.Errorf("Expected status code %d, got %d", http.StatusBadRequest, w.Code)
-		}
+		testUpdateUserWithInvalidID(t, router)
 	})
 
 	t.Run("update user with invalid data", func(t *testing.T) {
-		// 無効なデータ（JSON形式ではないデータ）でリクエスト
-		req, _ := http.NewRequest("PUT", "/api/v1/users/1", bytes.NewBuffer([]byte("invalid data")))
-		req.Header.Set("Content-Type", "application/json")
-		w := httptest.NewRecorder()
-		router.ServeHTTP(w, req)
-
-		// 無効なデータでのエラーレスポンスの検証
-		if w.Code != http.StatusBadRequest {
-			t.Errorf("Expected status code %d, got %d", http.StatusBadRequest, w.Code)
-		}
+		testUpdateUserWithInvalidData(t, router)
 	})
 }
 
@@ -602,6 +723,7 @@ func TestDeleteUser(t *testing.T) {
 
 		// レスポンスボディをデコード
 		var response map[string]string
+
 		err := json.Unmarshal(w.Body.Bytes(), &response)
 		if err != nil {
 			t.Fatalf("Failed to unmarshal response: %v", err)
