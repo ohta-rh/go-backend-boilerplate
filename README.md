@@ -8,6 +8,47 @@ This project is designed according to the principles of [Clean Architecture](htt
 
 ![Clean Architecture](https://blog.cleancoder.com/uncle-bob/images/2012-08-13-the-clean-architecture/CleanArchitecture.jpg)
 
+### Project Architecture Diagram
+
+```mermaid
+graph TD
+    subgraph "External"
+        Web["Web / API"]
+        DB["Database"]
+    end
+    
+    subgraph "Interface Adapters"
+        H["Handlers<br/>(internal/handler)"]
+        R["Repositories<br/>(internal/repository)"]
+    end
+    
+    subgraph "Application Core"
+        UC["Use Cases<br/>(internal/usecase)"]
+        D["Domain<br/>(internal/domain)"]
+    end
+    
+    subgraph "Infrastructure"
+        I["Infrastructure<br/>(internal/infrastructure)"]
+    end
+    
+    Web --> H
+    H --> UC
+    UC --> D
+    R --> D
+    R --> I
+    I --> DB
+    
+    classDef core fill:#f9f,stroke:#333,stroke-width:2px;
+    classDef adapter fill:#bbf,stroke:#333,stroke-width:1px;
+    classDef external fill:#bfb,stroke:#333,stroke-width:1px;
+    classDef infra fill:#fbb,stroke:#333,stroke-width:1px;
+    
+    class D,UC core;
+    class H,R adapter;
+    class Web,DB external;
+    class I infra;
+```
+
 ### Layer Structure
 
 - **Domain Layer** (`internal/domain/`): Contains business entities and repository interfaces. This layer represents the core business concepts and rules. It does not depend on any other layer.
@@ -91,7 +132,52 @@ This project is designed according to the principles of [Clean Architecture](htt
 
 ## Development Guidelines
 
+### Development Workflow
+
+```mermaid
+graph TD
+    Start[Start Development] --> Feature[Create Feature Branch]
+    Feature --> Implement[Implement Feature]
+    Implement --> Test[Write Tests]
+    Test --> Lint[Run Linting]
+    Lint --> Fix[Fix Issues]
+    Fix --> PR[Create Pull Request]
+    PR --> Review[Code Review]
+    Review --> Merge[Merge to Main]
+    
+    classDef start fill:#bfb,stroke:#333,stroke-width:1px;
+    classDef process fill:#bbf,stroke:#333,stroke-width:1px;
+    classDef end fill:#fbb,stroke:#333,stroke-width:1px;
+    
+    class Start start;
+    class Implement,Test,Lint,Fix,PR,Review process;
+    class Merge end;
+```
+
 ### Adding a New Entity
+
+```mermaid
+flowchart TD
+    A[1. Create Ent Schema] --> B[2. Generate Ent Code]
+    B --> C[3. Add Domain Entity]
+    C --> D[4. Create API Schemas]
+    D --> E[5. Add Repository Implementation]
+    E --> F[6. Add Use Case]
+    F --> G[7. Add Handler]
+    G --> H[8. Add Route]
+    
+    classDef schema fill:#f9f,stroke:#333,stroke-width:1px;
+    classDef domain fill:#bbf,stroke:#333,stroke-width:1px;
+    classDef impl fill:#bfb,stroke:#333,stroke-width:1px;
+    classDef api fill:#fbb,stroke:#333,stroke-width:1px;
+    
+    class A,B schema;
+    class C domain;
+    class D,G,H api;
+    class E,F impl;
+```
+
+The steps in detail:
 
 1. Create a new schema file in the `ent/schema/` directory
 2. Run `cmd/entgen/entgen.go` to generate Ent code
@@ -144,6 +230,27 @@ When adding new code, always ensure it passes both tests and linting checks befo
 
 The project includes GitHub Actions workflows for continuous integration. The CI pipeline runs tests and linting on each pull request and push to the main branch.
 
+```mermaid
+flowchart LR
+    PR[Pull Request] --> Build[Build]
+    Build --> Lint[Lint Code]
+    Lint --> Test[Run Tests]
+    Test --> Coverage[Check Coverage]
+    Coverage --> Report[Generate Report]
+    
+    Push[Push to Main] --> BuildProd[Build Production]
+    BuildProd --> TestProd[Test Production]
+    TestProd --> Deploy[Deploy]
+    
+    classDef trigger fill:#f9f,stroke:#333,stroke-width:1px;
+    classDef process fill:#bbf,stroke:#333,stroke-width:1px;
+    classDef deploy fill:#bfb,stroke:#333,stroke-width:1px;
+    
+    class PR,Push trigger;
+    class Build,Lint,Test,Coverage,Report,BuildProd,TestProd process;
+    class Deploy deploy;
+```
+
 ### Building
 
 ```bash
@@ -153,6 +260,38 @@ make build
 ## Dependency Rules
 
 This project uses both `.cursorrules` and `.clinerules` files to strictly enforce Clean Architecture dependency rules. These files prevent inner layers from depending on outer layers.
+
+### Dependency Flow Diagram
+
+```mermaid
+flowchart TD
+    subgraph "Dependency Direction"
+        direction LR
+        Outer["Outer Layers"] --> Inner["Inner Layers"]
+    end
+    
+    Domain["Domain Layer<br/>(internal/domain)"]
+    UseCase["Use Case Layer<br/>(internal/usecase)"]
+    Handler["Handler Layer<br/>(internal/handler)"]
+    Repository["Repository Layer<br/>(internal/repository)"]
+    Infrastructure["Infrastructure Layer<br/>(internal/infrastructure)"]
+    Schema["Schema Layer<br/>(internal/schema)"]
+    
+    Handler --> UseCase
+    Handler --> Domain
+    Handler --> Schema
+    UseCase --> Domain
+    Repository --> Domain
+    Repository --> Infrastructure
+    Infrastructure --> Domain
+    Schema --> Domain
+    
+    classDef core fill:#f9f,stroke:#333,stroke-width:2px;
+    classDef outer fill:#bbf,stroke:#333,stroke-width:1px;
+    
+    class Domain core;
+    class UseCase,Handler,Repository,Infrastructure,Schema outer;
+```
 
 The dependency rules are:
 
