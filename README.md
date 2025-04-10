@@ -36,12 +36,12 @@ graph TD
     UC --> D
     R --> D
     R --> I
-    I --> DB
+    DB --> I
     
-    classDef core fill:#f9f,stroke:#333,stroke-width:2px;
-    classDef adapter fill:#bbf,stroke:#333,stroke-width:1px;
-    classDef external fill:#bfb,stroke:#333,stroke-width:1px;
-    classDef infra fill:#fbb,stroke:#333,stroke-width:1px;
+    classDef core fill:#ff9af0,stroke:#fff,stroke-width:2px;
+    classDef adapter fill:#a4a4ff,stroke:#fff,stroke-width:1px;
+    classDef external fill:#a8ffa8,stroke:#fff,stroke-width:1px;
+    classDef infra fill:#ffb2a8,stroke:#fff,stroke-width:1px;
     
     class D,UC core;
     class H,R adapter;
@@ -145,9 +145,9 @@ graph TD
     PR --> Review[Code Review]
     Review --> Merge[Merge to Main]
     
-    classDef start fill:#bfb,stroke:#333,stroke-width:1px;
-    classDef process fill:#bbf,stroke:#333,stroke-width:1px;
-    classDef end fill:#fbb,stroke:#333,stroke-width:1px;
+    classDef start fill:#a8ffa8,stroke:#fff,stroke-width:1px;
+    classDef process fill:#a4a4ff,stroke:#fff,stroke-width:1px;
+    classDef end fill:#ffb2a8,stroke:#fff,stroke-width:1px;
     
     class Start start;
     class Implement,Test,Lint,Fix,PR,Review process;
@@ -166,10 +166,10 @@ flowchart TD
     F --> G[7. Add Handler]
     G --> H[8. Add Route]
     
-    classDef schema fill:#f9f,stroke:#333,stroke-width:1px;
-    classDef domain fill:#bbf,stroke:#333,stroke-width:1px;
-    classDef impl fill:#bfb,stroke:#333,stroke-width:1px;
-    classDef api fill:#fbb,stroke:#333,stroke-width:1px;
+    classDef schema fill:#ff9af0,stroke:#fff,stroke-width:1px;
+    classDef domain fill:#a4a4ff,stroke:#fff,stroke-width:1px;
+    classDef impl fill:#a8ffa8,stroke:#fff,stroke-width:1px;
+    classDef api fill:#ffb2a8,stroke:#fff,stroke-width:1px;
     
     class A,B schema;
     class C domain;
@@ -210,12 +210,12 @@ graph TD
     Schema --> |Validates| DataTransformation["DTO Conversion<br/>Validation"]
     Infra --> |Validates| ExternalServices["External Integrations<br/>Database Connections"]
     
-    classDef domain fill:#f9f,stroke:#333,stroke-width:1px;
-    classDef usecase fill:#bbf,stroke:#333,stroke-width:1px;
-    classDef repo fill:#bfb,stroke:#333,stroke-width:1px;
-    classDef handler fill:#fbb,stroke:#333,stroke-width:1px;
-    classDef schema fill:#fbf,stroke:#333,stroke-width:1px;
-    classDef infra fill:#bff,stroke:#333,stroke-width:1px;
+    classDef domain fill:#ff9af0,stroke:#fff,stroke-width:1px;
+    classDef usecase fill:#a4a4ff,stroke:#fff,stroke-width:1px;
+    classDef repo fill:#a8ffa8,stroke:#fff,stroke-width:1px;
+    classDef handler fill:#ffb2a8,stroke:#fff,stroke-width:1px;
+    classDef schema fill:#f0b2ff,stroke:#fff,stroke-width:1px;
+    classDef infra fill:#a8f0ff,stroke:#fff,stroke-width:1px;
     
     class Domain,DomainEntities domain;
     class UseCase,BusinessLogic usecase;
@@ -273,9 +273,9 @@ flowchart LR
     BuildProd --> TestProd[Test Production]
     TestProd --> Deploy[Deploy]
     
-    classDef trigger fill:#f9f,stroke:#333,stroke-width:1px;
-    classDef process fill:#bbf,stroke:#333,stroke-width:1px;
-    classDef deploy fill:#bfb,stroke:#333,stroke-width:1px;
+    classDef trigger fill:#ff9af0,stroke:#fff,stroke-width:1px;
+    classDef process fill:#a4a4ff,stroke:#fff,stroke-width:1px;
+    classDef deploy fill:#a8ffa8,stroke:#fff,stroke-width:1px;
     
     class PR,Push trigger;
     class Build,Lint,Test,Coverage,Report,BuildProd,TestProd process;
@@ -317,8 +317,8 @@ flowchart TD
     Infrastructure --> Domain
     Schema --> Domain
     
-    classDef core fill:#f9f,stroke:#333,stroke-width:2px;
-    classDef outer fill:#bbf,stroke:#333,stroke-width:1px;
+    classDef core fill:#ff9af0,stroke:#fff,stroke-width:2px;
+    classDef outer fill:#a4a4ff,stroke:#fff,stroke-width:1px;
     
     class Domain core;
     class UseCase,Handler,Repository,Infrastructure,Schema outer;
@@ -329,8 +329,9 @@ The dependency rules are:
 - Domain layer should not depend on any other layer.
 - Use case layer should only depend on domain layer.
 - Repository layer should only depend on domain and infrastructure layers.
-- Handler layer should only depend on domain and use case layers.
+- Handler layer should only depend on domain, use case, and schema layers.
 - Infrastructure layer should only depend on domain layer.
+- External systems (like databases) interact with the infrastructure layer.
 
 ## License
 
