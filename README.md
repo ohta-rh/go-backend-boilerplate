@@ -192,6 +192,39 @@ The steps in detail:
 
 The project includes automated tests for all components except the `ent` directory, which is excluded from test runs. Each layer of the architecture has its own tests:
 
+```mermaid
+graph TD
+    subgraph "Test Coverage"
+        Domain["Domain Layer Tests"]
+        UseCase["Use Case Layer Tests"]
+        Repository["Repository Layer Tests"]
+        Handler["Handler Layer Tests"]
+        Schema["Schema Layer Tests"]
+        Infra["Infrastructure Layer Tests"]
+    end
+    
+    Domain --> |Validates| DomainEntities["Business Entities<br/>Business Rules"]
+    UseCase --> |Validates| BusinessLogic["Application Logic<br/>Use Case Flows"]
+    Repository --> |Validates| DataAccess["Data Access<br/>Storage Operations"]
+    Handler --> |Validates| API["API Endpoints<br/>Request Handling"]
+    Schema --> |Validates| DataTransformation["DTO Conversion<br/>Validation"]
+    Infra --> |Validates| ExternalServices["External Integrations<br/>Database Connections"]
+    
+    classDef domain fill:#f9f,stroke:#333,stroke-width:1px;
+    classDef usecase fill:#bbf,stroke:#333,stroke-width:1px;
+    classDef repo fill:#bfb,stroke:#333,stroke-width:1px;
+    classDef handler fill:#fbb,stroke:#333,stroke-width:1px;
+    classDef schema fill:#fbf,stroke:#333,stroke-width:1px;
+    classDef infra fill:#bff,stroke:#333,stroke-width:1px;
+    
+    class Domain,DomainEntities domain;
+    class UseCase,BusinessLogic usecase;
+    class Repository,DataAccess repo;
+    class Handler,API handler;
+    class Schema,DataTransformation schema;
+    class Infra,ExternalServices infra;
+```
+
 - **Domain Layer**: Tests for business entities and their behavior
 - **Use Case Layer**: Tests for application logic and business rules
 - **Repository Layer**: Tests for data access implementations
