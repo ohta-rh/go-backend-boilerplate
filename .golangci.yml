@@ -1,10 +1,13 @@
 run:
   go: '1.24'
   timeout: 5m
+  modules-download-mode: readonly
+  allow-parallel-runners: true
   
 linters:
   disable-all: true
   enable:
+    # Basic linters
     - gofmt
     - govet
     - errcheck
@@ -13,27 +16,45 @@ linters:
     - gosimple
     - ineffassign
     - misspell
+    
+    # Code complexity
     - gocyclo
     - dupl
     - goconst
     - goimports
+    
+    # Bug prevention
     - bodyclose
     - revive
     - prealloc
     - unconvert
     - unparam
     - gocritic
+    
+    # Style and documentation
     - godot
     - whitespace
     - wsl
     - nolintlint
+    
+    # Architecture
     - gochecknoinits
     - gochecknoglobals
+    
+    # Security
     - gosec
+    
+    # Additional quality checks
     - stylecheck
     - nakedret
     - dogsled
     - nestif
+    - tparallel
+    - thelper
+    - forbidigo
+    - nilnil
+    - contextcheck
+    - errorlint
 
 linters-settings:
   gocyclo:
@@ -48,6 +69,12 @@ linters-settings:
       - name: exported
         severity: warning
         disabled: false
+      - name: unexported-return
+        severity: warning
+      - name: if-return
+        severity: warning
+      - name: increment-decrement
+        severity: warning
   gocritic:
     enabled-tags:
       - diagnostic
@@ -57,6 +84,16 @@ linters-settings:
       - opinionated
   nestif:
     min-complexity: 4
+  forbidigo:
+    forbid:
+      - ^fmt\.Print.*$
+      - ^log\..*$
+      - ^panic$
+      - ^os\.Exit$
+  errorlint:
+    errorf: true
+    asserts: true
+    comparison: true
 
 issues:
   exclude-rules:
@@ -64,14 +101,28 @@ issues:
       linters:
         - errcheck
         - gosec
+        - dupl
+        - gocyclo
+    - path: internal/domain/
+      linters:
+        - gochecknoglobals
+    - path: cmd/
+      linters:
+        - gochecknoinits
   exclude-dirs:
     - ent/
     - tmp/
+    - vendor/
+    - mocks/
   max-issues-per-linter: 0
   max-same-issues: 0
   fix: true
+  new: true
+  new-from-rev: HEAD~1
 
 output:
   sort-results: true
   formats:
     - format: colored-line-number
+  print-issued-lines: true
+  print-linter-name: true
