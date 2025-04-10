@@ -15,13 +15,13 @@ api.install:
 	docker-compose exec api go mod download
 	docker-compose exec api go mod tidy
 
-# Run tests
+# Run tests (excluding ent directory)
 test:
-	docker-compose exec api go test ./...
+	docker-compose exec api go test $(shell docker-compose exec -T api go list ./... | grep -v "/ent")
 
-# Run tests with coverage
+# Run tests with coverage (excluding ent directory)
 test.cover:
-	docker-compose exec api go test -cover ./...
+	docker-compose exec api go test -cover $(shell docker-compose exec -T api go list ./... | grep -v "/ent")
 
 # Run tests for specific package
 test.pkg:

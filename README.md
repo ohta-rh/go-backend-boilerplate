@@ -21,6 +21,9 @@ This project is designed according to the principles of [Clean Architecture](htt
 
 ```
 .
+├── .github/                # GitHub specific files
+│   └── workflows/          # GitHub Actions workflows
+│       └── ci.yaml         # Continuous Integration workflow
 ├── cmd/                    # Application entry points
 │   ├── api/                # API server
 │   └── entgen/             # Ent schema generation tool
@@ -35,8 +38,9 @@ This project is designed according to the principles of [Clean Architecture](htt
 │   ├── repository/         # Repository implementations
 │   └── usecase/            # Use cases (application logic)
 ├── .air.toml               # Air configuration file (hot reload)
-├── .cursorrules            # Cursor editor dependency rules
 ├── .clinerules             # Cline editor dependency rules
+├── .cursorrules            # Cursor editor dependency rules
+├── .golangci.yml           # GolangCI-Lint configuration
 ├── compose.yml             # Docker Compose configuration
 ├── Dockerfile              # Docker image build configuration
 ├── go.mod                  # Go module definition
@@ -49,6 +53,8 @@ This project is designed according to the principles of [Clean Architecture](htt
 - [Ent](https://entgo.io/) - Entity framework (ORM)
 - [Docker](https://www.docker.com/) - Containerization
 - [Air](https://github.com/cosmtrek/air) - Hot reload development tool
+- [GolangCI-Lint](https://golangci-lint.run/) - Go linters aggregator
+- [GitHub Actions](https://github.com/features/actions) - CI/CD platform
 
 ## Setup
 
@@ -95,9 +101,24 @@ This project is designed according to the principles of [Clean Architecture](htt
 
 ### Testing
 
+The project includes automated tests for all components except the `ent` directory, which is excluded from test runs.
+
 ```bash
-make test
+make test       # Run tests (excluding ent directory)
+make test.cover # Run tests with coverage (excluding ent directory)
 ```
+
+### Linting
+
+The project uses GolangCI-Lint for code quality checks. Run linting with:
+
+```bash
+make lint
+```
+
+### CI/CD
+
+The project includes GitHub Actions workflows for continuous integration. The CI pipeline runs tests and linting on each pull request and push to the main branch.
 
 ### Building
 
