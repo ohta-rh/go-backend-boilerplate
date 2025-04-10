@@ -5,12 +5,13 @@ package enttest
 import (
 	"context"
 
-	"github.com/tetsuyaohta/go-backend-boilerplate/ent"
+	"easy-go-backend/ent"
 	// required by schema hooks.
-	_ "github.com/tetsuyaohta/go-backend-boilerplate/ent/runtime"
+	_ "easy-go-backend/ent/runtime"
+
+	"easy-go-backend/ent/migrate"
 
 	"entgo.io/ent/dialect/sql/schema"
-	"github.com/tetsuyaohta/go-backend-boilerplate/ent/migrate"
 )
 
 type (

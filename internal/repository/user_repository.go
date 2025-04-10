@@ -3,8 +3,8 @@ package repository
 import (
 	"context"
 
-	"github.com/tetsuyaohta/go-backend-boilerplate/ent"
-	domainUser "github.com/tetsuyaohta/go-backend-boilerplate/internal/domain/user"
+	"easy-go-backend/ent"
+	domainUser "easy-go-backend/internal/domain/user"
 )
 
 // UserRepository implements the user.Repository interface using ent.

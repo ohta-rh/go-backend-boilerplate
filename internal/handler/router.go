@@ -3,8 +3,9 @@ package handler
 import (
 	"net/http"
 
+	"easy-go-backend/internal/usecase"
+
 	"github.com/gin-gonic/gin"
-	"github.com/tetsuyaohta/go-backend-boilerplate/internal/usecase"
 )
 
 // SetupRouter はGinのルーターを設定し、すべてのルートを定義します.

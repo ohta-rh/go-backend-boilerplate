@@ -4,9 +4,8 @@ package hook
 
 import (
 	"context"
+	"easy-go-backend/ent"
 	"fmt"
-
-	"github.com/tetsuyaohta/go-backend-boilerplate/ent"
 )
 
 // The UserFunc type is an adapter to allow the use of ordinary

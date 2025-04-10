@@ -3,10 +3,9 @@
 package ent
 
 import (
+	"easy-go-backend/ent/schema"
+	"easy-go-backend/ent/user"
 	"time"
-
-	"github.com/tetsuyaohta/go-backend-boilerplate/ent/schema"
-	"github.com/tetsuyaohta/go-backend-boilerplate/ent/user"
 )
 
 // The init function reads all schema descriptors with runtime code

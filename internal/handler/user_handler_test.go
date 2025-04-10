@@ -10,8 +10,9 @@ import (
 	"strconv"
 	"testing"
 
+	"easy-go-backend/internal/domain/user"
+
 	"github.com/gin-gonic/gin"
-	"github.com/tetsuyaohta/go-backend-boilerplate/internal/domain/user"
 )
 
 // MockUserInteractor はテスト用のユースケースモックです.

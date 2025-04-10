@@ -4,6 +4,8 @@ package ent
 
 import (
 	"context"
+	"easy-go-backend/ent/predicate"
+	"easy-go-backend/ent/user"
 	"errors"
 	"fmt"
 	"sync"
@@ -11,8 +13,6 @@ import (
 
 	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"
-	"github.com/tetsuyaohta/go-backend-boilerplate/ent/predicate"
-	"github.com/tetsuyaohta/go-backend-boilerplate/ent/user"
 )
 
 const (

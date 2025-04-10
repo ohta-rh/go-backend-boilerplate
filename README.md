@@ -68,8 +68,8 @@ This project is designed according to the principles of [Clean Architecture](htt
 
 1. Clone the repository:
    ```bash
-   git clone https://github.com/yourusername/go-backend-boilerplate.git
-   cd go-backend-boilerplate
+   git clone https://github.com/yourusername/easy-go-backend.git
+   cd easy-go-backend
    ```
 
 2. Install dependencies:

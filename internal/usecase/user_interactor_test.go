@@ -5,7 +5,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/tetsuyaohta/go-backend-boilerplate/internal/domain/user"
+	"easy-go-backend/internal/domain/user"
 )
 
 // MockUserRepository はテスト用のモックリポジトリです.

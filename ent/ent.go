@@ -4,6 +4,7 @@ package ent
 
 import (
 	"context"
+	"easy-go-backend/ent/user"
 	"errors"
 	"fmt"
 	"reflect"
@@ -12,7 +13,6 @@ import (
 	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
-	"github.com/tetsuyaohta/go-backend-boilerplate/ent/user"
 )
 
 // ent aliases to avoid import conflicts in user's code.

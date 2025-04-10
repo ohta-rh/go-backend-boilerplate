@@ -3,7 +3,7 @@ package usecase
 import (
 	"context"
 
-	"github.com/tetsuyaohta/go-backend-boilerplate/internal/domain/user"
+	"easy-go-backend/internal/domain/user"
 )
 
 // UserInteractor implements use cases for user domain.

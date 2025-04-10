@@ -3,13 +3,13 @@
 package ent
 
 import (
+	"easy-go-backend/ent/user"
 	"fmt"
 	"strings"
 	"time"
 
 	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"
-	"github.com/tetsuyaohta/go-backend-boilerplate/ent/user"
 )
 
 // User is the model entity for the User schema.

@@ -3,10 +3,10 @@
 package user
 
 import (
+	"easy-go-backend/ent/predicate"
 	"time"
 
 	"entgo.io/ent/dialect/sql"
-	"github.com/tetsuyaohta/go-backend-boilerplate/ent/predicate"
 )
 
 // ID filters vertices based on their ID field.

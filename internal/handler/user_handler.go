@@ -4,9 +4,10 @@ import (
 	"net/http"
 	"strconv"
 
+	"easy-go-backend/internal/domain/user"
+	"easy-go-backend/internal/usecase"
+
 	"github.com/gin-gonic/gin"
-	"github.com/tetsuyaohta/go-backend-boilerplate/internal/domain/user"
-	"github.com/tetsuyaohta/go-backend-boilerplate/internal/usecase"
 )
 
 // UserHandler handles HTTP requests for users.

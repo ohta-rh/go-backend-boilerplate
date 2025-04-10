@@ -5,8 +5,9 @@ import (
 	"log"
 	"time"
 
+	"easy-go-backend/ent"
+
 	_ "github.com/lib/pq"
-	"github.com/tetsuyaohta/go-backend-boilerplate/ent"
 )
 
 // NewClient creates a new ent client with connection to PostgreSQL.

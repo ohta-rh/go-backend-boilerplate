@@ -1,4 +1,4 @@
-module github.com/tetsuyaohta/go-backend-boilerplate
+module easy-go-backend
 
 go 1.24.2
 
@@ -53,4 +53,4 @@ require (
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 )
 
-replace github.com/tetsuyaohta/go-backend-boilerplate => ./
+replace easy-go-backend => ./

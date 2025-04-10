@@ -4,14 +4,14 @@ package ent
 
 import (
 	"context"
+	"easy-go-backend/ent/predicate"
+	"easy-go-backend/ent/user"
 	"errors"
 	"fmt"
 
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
-	"github.com/tetsuyaohta/go-backend-boilerplate/ent/predicate"
-	"github.com/tetsuyaohta/go-backend-boilerplate/ent/user"
 )
 
 // UserUpdate is the builder for updating User entities.

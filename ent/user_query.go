@@ -4,6 +4,8 @@ package ent
 
 import (
 	"context"
+	"easy-go-backend/ent/predicate"
+	"easy-go-backend/ent/user"
 	"fmt"
 	"math"
 
@@ -11,8 +13,6 @@ import (
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
-	"github.com/tetsuyaohta/go-backend-boilerplate/ent/predicate"
-	"github.com/tetsuyaohta/go-backend-boilerplate/ent/user"
 )
 
 // UserQuery is the builder for querying User entities.

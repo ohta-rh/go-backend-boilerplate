@@ -4,12 +4,13 @@ import (
 	"log"
 	"os"
 
+	"easy-go-backend/internal/handler"
+	"easy-go-backend/internal/infrastructure/database"
+	"easy-go-backend/internal/repository"
+	"easy-go-backend/internal/usecase"
+
 	"github.com/gin-gonic/gin"
 	_ "github.com/lib/pq"
-	"github.com/tetsuyaohta/go-backend-boilerplate/internal/handler"
-	"github.com/tetsuyaohta/go-backend-boilerplate/internal/infrastructure/database"
-	"github.com/tetsuyaohta/go-backend-boilerplate/internal/repository"
-	"github.com/tetsuyaohta/go-backend-boilerplate/internal/usecase"
 )
 
 // run is the actual application logic, separate from main to properly handle defer.

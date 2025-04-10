@@ -52,7 +52,7 @@ api.lint.check:
 	docker-compose exec api golangci-lint run
 
 api.mod.edit:
-	docker-compose exec api go mod edit -replace github.com/tetsuyaohta/go-backend-boilerplate=./
+	docker-compose exec api go mod edit -replace easy-go-backend=./
 
 # Install ent
 api.ent.install:

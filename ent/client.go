@@ -9,12 +9,13 @@ import (
 	"log"
 	"reflect"
 
-	"github.com/tetsuyaohta/go-backend-boilerplate/ent/migrate"
+	"easy-go-backend/ent/migrate"
+
+	"easy-go-backend/ent/user"
 
 	"entgo.io/ent"
 	"entgo.io/ent/dialect"
 	"entgo.io/ent/dialect/sql"
-	"github.com/tetsuyaohta/go-backend-boilerplate/ent/user"
 )
 
 // Client is the client that holds all ent builders.
