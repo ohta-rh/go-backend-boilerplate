@@ -28,7 +28,7 @@ jobs:
 
       - name: Verify modernize
         run: |
-          modernize -test ../..
+          modernize -test ./...
 
       - name: Run linter
         run: |
