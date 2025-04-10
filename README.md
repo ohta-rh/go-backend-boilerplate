@@ -10,10 +10,11 @@ This project is designed according to the principles of [Clean Architecture](htt
 
 ### Layer Structure
 
-- **Domain Layer** (`internal/domain/`): Contains business entities and repository interfaces. This layer does not depend on any other layer.
+- **Domain Layer** (`internal/domain/`): Contains business entities and repository interfaces. This layer represents the core business concepts and rules. It does not depend on any other layer.
+- **Schema Layer** (`internal/schema/`): Contains request and response schemas for API communication. This layer is responsible for data transfer objects (DTOs) and conversion between domain entities and API schemas.
 - **Use Case Layer** (`internal/usecase/`): Implements the business logic of the application. Depends only on the domain layer.
 - **Interface Adapter Layer**:
-  - **Handler** (`internal/handler/`): Processes HTTP requests and calls use cases.
+  - **Handler** (`internal/handler/`): Processes HTTP requests, converts between schemas and domain entities, and calls use cases.
   - **Repository** (`internal/repository/`): Provides implementations of domain repository interfaces.
 - **Infrastructure Layer** (`internal/infrastructure/`): Responsible for integration with external services such as database connections.
 
@@ -30,10 +31,11 @@ This project is designed according to the principles of [Clean Architecture](htt
 ├── ent/                    # Ent framework related code
 │   └── schema/             # Database schema definitions
 ├── internal/               # Internal packages
-│   ├── domain/             # Domain layer
-│   │   └── user/           # User domain
+│   ├── domain/             # Domain layer (business entities)
+│   │   └── user/           # User domain entities
 │   ├── handler/            # HTTP handlers
 │   ├── infrastructure/     # Infrastructure layer
+│   ├── schema/             # Request/Response schemas
 │   │   └── database/       # Database connections
 │   ├── repository/         # Repository implementations
 │   └── usecase/            # Use cases (application logic)
@@ -94,10 +96,11 @@ This project is designed according to the principles of [Clean Architecture](htt
 1. Create a new schema file in the `ent/schema/` directory
 2. Run `cmd/entgen/entgen.go` to generate Ent code
 3. Add a new domain entity and repository interface in `internal/domain/`
-4. Add repository implementation in `internal/repository/`
-5. Add use case in `internal/usecase/`
-6. Add handler in `internal/handler/`
-7. Add route in `internal/handler/router.go`
+4. Create request/response schemas in `internal/schema/`
+5. Add repository implementation in `internal/repository/`
+6. Add use case in `internal/usecase/`
+7. Add handler in `internal/handler/` (with conversion between schemas and domain entities)
+8. Add route in `internal/handler/router.go`
 
 ### Testing
 

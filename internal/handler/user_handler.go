@@ -4,7 +4,7 @@ import (
 	"net/http"
 	"strconv"
 
-	"easy-go-backend/internal/domain/user"
+	"easy-go-backend/internal/schema"
 	"easy-go-backend/internal/usecase"
 
 	"github.com/gin-gonic/gin"
@@ -36,24 +36,26 @@ func (h *UserHandler) GetUser(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, user)
+	c.JSON(http.StatusOK, schema.FromEntity(user))
 }
 
 // CreateUser handles POST request to create a user.
 func (h *UserHandler) CreateUser(c *gin.Context) {
-	var userDTO user.User
-	if err := c.ShouldBindJSON(&userDTO); err != nil {
+	var req schema.UserRequest
+	if err := c.ShouldBindJSON(&req); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 
-	createdUser, err := h.userInteractor.CreateUser(c, &userDTO)
+	userEntity := req.ToEntity()
+
+	createdUser, err := h.userInteractor.CreateUser(c, userEntity)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
 
-	c.JSON(http.StatusCreated, createdUser)
+	c.JSON(http.StatusCreated, schema.FromEntity(createdUser))
 }
 
 // UpdateUser handles PUT request to update a user.
@@ -64,21 +66,22 @@ func (h *UserHandler) UpdateUser(c *gin.Context) {
 		return
 	}
 
-	var userDTO user.User
-	if err := c.ShouldBindJSON(&userDTO); err != nil {
+	var req schema.UserRequest
+	if err := c.ShouldBindJSON(&req); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 
-	userDTO.ID = id
+	userEntity := req.ToEntity()
+	userEntity.ID = id
 
-	updatedUser, err := h.userInteractor.UpdateUser(c, &userDTO)
+	updatedUser, err := h.userInteractor.UpdateUser(c, userEntity)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
 
-	c.JSON(http.StatusOK, updatedUser)
+	c.JSON(http.StatusOK, schema.FromEntity(updatedUser))
 }
 
 // DeleteUser handles DELETE request to delete a user.
@@ -105,5 +108,5 @@ func (h *UserHandler) GetAllUsers(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, users)
+	c.JSON(http.StatusOK, schema.FromEntities(users))
 }
