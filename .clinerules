@@ -1,0 +1,35 @@
+{
+  "version": 1,
+  "rules": [
+    {
+      "name": "Domain Layer Dependencies",
+      "source": "internal/domain/**",
+      "forbidden": ["internal/handler/**", "internal/infrastructure/**", "internal/repository/**", "internal/usecase/**", "cmd/**", "ent/**"],
+      "message": "Domain layer should not depend on any other layer."
+    },
+    {
+      "name": "Use Case Layer Dependencies",
+      "source": "internal/usecase/**",
+      "forbidden": ["internal/handler/**", "internal/infrastructure/**", "internal/repository/**", "cmd/**"],
+      "message": "Use case layer should only depend on domain layer."
+    },
+    {
+      "name": "Repository Layer Dependencies",
+      "source": "internal/repository/**",
+      "forbidden": ["internal/handler/**", "cmd/**"],
+      "message": "Repository layer should only depend on domain and infrastructure layers."
+    },
+    {
+      "name": "Handler Layer Dependencies",
+      "source": "internal/handler/**",
+      "forbidden": ["cmd/**"],
+      "message": "Handler layer should only depend on domain and use case layers."
+    },
+    {
+      "name": "Infrastructure Layer Dependencies",
+      "source": "internal/infrastructure/**",
+      "forbidden": ["internal/handler/**", "internal/usecase/**", "cmd/**"],
+      "message": "Infrastructure layer should only depend on domain layer."
+    }
+  ]
+}

@@ -1,0 +1,30 @@
+{
+  "version": 1,
+  "rules": [
+    {
+      "pattern": "internal/domain/**",
+      "disallowed": ["internal/handler/**", "internal/infrastructure/**", "internal/repository/**", "internal/usecase/**", "cmd/**", "ent/**"],
+      "message": "Domain layer should not depend on any other layer."
+    },
+    {
+      "pattern": "internal/usecase/**",
+      "disallowed": ["internal/handler/**", "internal/infrastructure/**", "internal/repository/**", "cmd/**"],
+      "message": "Use case layer should only depend on domain layer."
+    },
+    {
+      "pattern": "internal/repository/**",
+      "disallowed": ["internal/handler/**", "cmd/**"],
+      "message": "Repository layer should only depend on domain and infrastructure layers."
+    },
+    {
+      "pattern": "internal/handler/**",
+      "disallowed": ["cmd/**"],
+      "message": "Handler layer should only depend on domain and use case layers."
+    },
+    {
+      "pattern": "internal/infrastructure/**",
+      "disallowed": ["internal/handler/**", "internal/usecase/**", "cmd/**"],
+      "message": "Infrastructure layer should only depend on domain layer."
+    }
+  ]
+}
