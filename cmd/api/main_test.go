@@ -36,15 +36,32 @@ func teardown() {
 
 // 注意: 実際のアプリケーションでは、より詳細なテストが必要です.
 func TestEnvironmentVariables(t *testing.T) {
-	// 環境変数が正しく設定されているか確認
-	env := os.Getenv("GO_ENV")
-	if env != "test" {
-		t.Errorf("Expected GO_ENV to be 'test', got '%s'", env)
+	// テストケースを定義
+	tests := []struct {
+		name     string
+		envVar   string
+		expected string
+	}{
+		{
+			name:     "GO_ENV should be set to test",
+			envVar:   "GO_ENV",
+			expected: "test",
+		},
+		{
+			name:     "PORT should be set to 8081",
+			envVar:   "PORT",
+			expected: "8081",
+		},
 	}
 
-	port := os.Getenv("PORT")
-	if port != "8081" {
-		t.Errorf("Expected PORT to be '8081', got '%s'", port)
+	// 各テストケースを実行
+	for _, tc := range tests {
+		t.Run(tc.name, func(t *testing.T) {
+			actual := os.Getenv(tc.envVar)
+			if actual != tc.expected {
+				t.Errorf("Expected %s to be '%s', got '%s'", tc.envVar, tc.expected, actual)
+			}
+		})
 	}
 }
 
