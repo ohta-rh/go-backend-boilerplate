@@ -2,34 +2,57 @@
   "version": 1,
   "rules": [
     {
-      "name": "Domain Layer Dependencies",
-      "source": "internal/domain/**",
-      "forbidden": ["internal/handler/**", "internal/infrastructure/**", "internal/repository/**", "internal/usecase/**", "cmd/**", "ent/**"],
-      "message": "Domain layer should not depend on any other layer."
+      "pattern": "internal/domain/**",
+      "disallowed": ["internal/handler/**", "internal/infrastructure/**", "internal/repository/**", "internal/usecase/**", "cmd/**", "ent/**"],
+      "message": "Domain layer should not depend on any other layer.",
+      "severity": "error"
     },
     {
-      "name": "Use Case Layer Dependencies",
-      "source": "internal/usecase/**",
-      "forbidden": ["internal/handler/**", "internal/infrastructure/**", "internal/repository/**", "cmd/**"],
-      "message": "Use case layer should only depend on domain layer."
+      "pattern": "internal/usecase/**",
+      "disallowed": ["internal/handler/**", "internal/infrastructure/**", "internal/repository/**", "cmd/**"],
+      "message": "Use case layer should only depend on domain layer.",
+      "severity": "error"
     },
     {
-      "name": "Repository Layer Dependencies",
-      "source": "internal/repository/**",
-      "forbidden": ["internal/handler/**", "cmd/**"],
-      "message": "Repository layer should only depend on domain and infrastructure layers."
+      "pattern": "internal/repository/**",
+      "disallowed": ["internal/handler/**", "cmd/**"],
+      "message": "Repository layer should only depend on domain and infrastructure layers.",
+      "severity": "error"
     },
     {
-      "name": "Handler Layer Dependencies",
-      "source": "internal/handler/**",
-      "forbidden": ["cmd/**"],
-      "message": "Handler layer should only depend on domain and use case layers."
+      "pattern": "internal/handler/**",
+      "disallowed": ["cmd/**"],
+      "message": "Handler layer should only depend on domain and use case layers.",
+      "severity": "error"
     },
     {
-      "name": "Infrastructure Layer Dependencies",
-      "source": "internal/infrastructure/**",
-      "forbidden": ["internal/handler/**", "internal/usecase/**", "cmd/**"],
-      "message": "Infrastructure layer should only depend on domain layer."
+      "pattern": "internal/infrastructure/**",
+      "disallowed": ["internal/handler/**", "internal/usecase/**", "cmd/**"],
+      "message": "Infrastructure layer should only depend on domain layer.",
+      "severity": "error"
+    },
+    {
+      "pattern": "**",
+      "disallowed": ["fmt.Print*", "log.*"],
+      "message": "Use structured logging instead of fmt.Print* or log.*",
+      "severity": "warning"
+    },
+    {
+      "pattern": "**/*_test.go",
+      "allowed": ["testing", "github.com/stretchr/testify/**"],
+      "message": "Use standard testing package or testify for tests",
+      "severity": "info"
+    },
+    {
+      "pattern": "internal/**",
+      "disallowed": ["os.Exit", "panic("],
+      "message": "Avoid using os.Exit or panic in application code",
+      "severity": "warning"
+    },
+    {
+      "pattern": "**/*_test.go",
+      "message": "Use table-driven tests for comprehensive test coverage",
+      "severity": "info"
     }
   ]
 }

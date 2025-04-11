@@ -48,6 +48,11 @@
       "disallowed": ["os.Exit", "panic("],
       "message": "Avoid using os.Exit or panic in application code",
       "severity": "warning"
+    },
+    {
+      "pattern": "**/*_test.go",
+      "message": "Use table-driven tests for comprehensive test coverage",
+      "severity": "info"
     }
   ]
 }
